@@ -211,7 +211,7 @@ public class Enemy : MonoBehaviour
         Collider2D player = Physics2D.OverlapCircle(_attackPoint.transform.position, _attackRadius, _playerDetectingMask);
         if (player != null)
         {
-            player.GetComponent<PlayerController>().TakeHit(_damage);
+            //player.GetComponent<PlayerController>().TakeHit(_damage);
         }
         
     }

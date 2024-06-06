@@ -336,7 +336,7 @@ MonoBehaviour:
   _lastPlayerPositionPoint: {fileID: 0}
   _playerDetectingMask:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 0
   _obstacleRayDistance: 20
   _obstacleRayDistanceBehind: 5
   _speed: 4

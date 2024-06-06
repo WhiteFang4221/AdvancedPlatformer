@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
 
 public static class PlayerAnimator
 {
@@ -15,32 +16,23 @@ public static class PlayerAnimator
         public const string RollTrigger = "RollTrigger";
         public const string IsOnLadder = "IsOnLadder";
         public const string AttackTrigger = "AttackTrigger";
-        public const string AttackCombo = "AttackCombo";
-        public const string Attack1 = "Attack1";
-        public const string Attack2 = "Attack2";
-        public const string Attack3 = "Attack3";
-        public const string Attack4 = "Attack4";
+        public const string HitTrigger = "HitTrigger"; 
+    }
 
-        public const string AttackWindowOpen = "AttackWindowOpen";
-        public const string WeaponActive = "WeaponActive";
-        public const string HitTrigger = "HitTrigger";
-
-
-        public static class States
-        {
-            public const string Idle = nameof(Idle);
-            public const string Run = nameof(Run);
-            public const string Jump = nameof(Jump);
-            public const string Fall = nameof(Fall);
-            public const string Landing = nameof(Landing);
-            public const string Roll = nameof(Roll);
-            public const string Climb = nameof(Climb);
-            public const string BaseAttack = nameof(BaseAttack);
-            public const string SecondAttack = nameof(SecondAttack);
-            public const string ThirdAttack = nameof(ThirdAttack);
-            public const string FourthAttack = nameof(FourthAttack);
-            public const string KnightTakeDamage = nameof(KnightTakeDamage);
-        }
+    public static class States
+    {
+        public const string Idle = nameof(Idle);
+        public const string Run = nameof(Run);
+        public const string Jump = nameof(Jump);
+        public const string Fall = nameof(Fall);
+        public const string Landing = nameof(Landing);
+        public const string Roll = nameof(Roll);
+        public const string Climb = nameof(Climb);
+        public const string BaseAttack = nameof(BaseAttack);
+        public const string SecondAttack = nameof(SecondAttack);
+        public const string ThirdAttack = nameof(ThirdAttack);
+        public const string FourthAttack = nameof(FourthAttack);
+        public const string KnightTakeDamage = nameof(KnightTakeDamage);
     }
 }
 
@@ -63,7 +55,6 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
 
     private float _groundCheckRadius;
-    private float _ladderCheckerRadius;
     private float _rollingTime = 0.5f;
     private float _rollCooldown = 0;
     private float _ladderCenter;
@@ -71,25 +62,20 @@ public class PlayerController : MonoBehaviour
 
     private bool _isfaceRight = true;
     private bool _isCanRoll = true;
-    public bool _isOnGround;
-    public bool _isIgnoreStairCollider = false;
-    public bool _isOnLadder;
+    private bool _isOnGround;
+    private bool _isIgnoreStairCollider = false;
+    private bool _isOnLadder;
     private bool _isRolling;
     private bool _isLadderCheck;
     private bool _isBottomLadderCheck;
     private bool _isLadderPositionCorrected = true;
 
-    private void Awake()
-    {
-        
-    }
     private void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _groundCheckRadius = _groundChecker.GetComponent<CircleCollider2D>().radius;
-        _ladderCheckerRadius = _ladderChecker.GetComponent<CircleCollider2D>().radius;
     }
 
     private void Update()
@@ -102,7 +88,7 @@ public class PlayerController : MonoBehaviour
         Reflect();
         CheckGround();
         CheckLadder();
-        CatchOnLadder();
+        CatchLadder();
         FindPositionOnLadder();
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -110,14 +96,38 @@ public class PlayerController : MonoBehaviour
             Jump();
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _isCanRoll && _isOnGround)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && _isCanRoll == true && _isOnGround == true)
         {
             StartCoroutine(Roll());
         }
     }
 
-    #region BaseMove
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out LadderStair ladderStair))
+        {
+            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
+            _isIgnoreStairCollider = true;
+            _spriteRenderer.sortingOrder = 4;
+        }
 
+        if (collision.tag == "Enemy")
+        {
+            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "LadderStairs")
+        {
+            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), false);
+            _isIgnoreStairCollider = false;
+            _spriteRenderer.sortingOrder = 5;
+        }
+    }
+
+    #region BaseMove
     private void Walk()
     {
 
@@ -139,6 +149,7 @@ public class PlayerController : MonoBehaviour
             _isfaceRight = !_isfaceRight;
         }
     }
+
     private void CheckGround()
     {
         _isOnGround = Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer);
@@ -188,27 +199,14 @@ public class PlayerController : MonoBehaviour
     }
     #endregion
 
-    #region Leadder
+    #region Ladder
     private void CheckLadder()
     {
         _isLadderCheck = Physics2D.OverlapPoint(_ladderChecker.position, _ladderMask);
         _isBottomLadderCheck = Physics2D.OverlapPoint(_bottomLadderChecker.position, _ladderMask);
     }
 
-    private void ChangeBodyTypeOnLadder()
-    {
-        if (_isOnLadder)
-        {
-            _rb.bodyType = RigidbodyType2D.Kinematic;
-            _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
-        }
-        else
-        {
-            _rb.bodyType = RigidbodyType2D.Dynamic;
-        }
-    }
-
-    private void CatchOnLadder()
+    private void CatchLadder()
     {
         if (!_isRolling)
         {
@@ -217,7 +215,7 @@ public class PlayerController : MonoBehaviour
 
         if (_isLadderCheck || _isBottomLadderCheck)
         {
-            if (!_isLadderCheck && _isBottomLadderCheck) // Сверху
+            if (_isLadderCheck == false && _isBottomLadderCheck == true) // Сверху
             {
                 if (_verticalInput > 0)
                 {
@@ -228,7 +226,7 @@ public class PlayerController : MonoBehaviour
                     _isOnLadder = true;
                 }
             }
-            else if (_isLadderCheck && _isBottomLadderCheck) // на лестнице
+            else if (_isLadderCheck == true && _isBottomLadderCheck == true) // на лестнице
             {
                 if (_verticalInput > 0)
                 {
@@ -239,7 +237,7 @@ public class PlayerController : MonoBehaviour
                     _isOnLadder = true;
                 }
             }
-            else if (_isLadderCheck && !_isBottomLadderCheck) // внизу
+            else if (_isLadderCheck == true && _isBottomLadderCheck == false) // внизу
             {
                 if (_verticalInput > 0)
                 {
@@ -250,7 +248,6 @@ public class PlayerController : MonoBehaviour
                     _isOnLadder = false;
                 }
             }
-
         }
         else
         {
@@ -262,9 +259,23 @@ public class PlayerController : MonoBehaviour
         _animator.SetBool(PlayerAnimator.Params.IsOnLadder, _isOnLadder);
     }
 
+    private void ChangeBodyTypeOnLadder()
+    {
+        if (_isOnLadder)
+        {
+            _rb.bodyType = RigidbodyType2D.Kinematic;
+            _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
+
+        }
+        else
+        {
+            _rb.bodyType = RigidbodyType2D.Dynamic;
+        }
+    }
+
     private void FindPositionOnLadder()
     {
-        if (_isOnLadder && _isLadderPositionCorrected)
+        if (_isOnLadder && _isLadderPositionCorrected == true)
         {
             _isLadderPositionCorrected = !_isLadderPositionCorrected;
             _rb.velocity = Vector2.zero;
@@ -288,41 +299,7 @@ public class PlayerController : MonoBehaviour
         }
         transform.position = new Vector2(_ladderCenter, transform.position.y);
     }
-   
     #endregion
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawSphere(_ladderChecker.position, _ladderCheckerRadius);
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(_bottomLadderChecker.position, _ladderCheckerRadius);
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.tag == "LadderStairs")
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
-            _isIgnoreStairCollider = true;
-            _spriteRenderer.sortingOrder = 4;
-        }
-
-        if (collision.tag == "Enemy")
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.tag == "LadderStairs")
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), false);
-            _isIgnoreStairCollider = false;
-            _spriteRenderer.sortingOrder = 5;
-        }
-    }
 }
 
 
