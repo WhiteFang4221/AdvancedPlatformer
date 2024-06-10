@@ -47,7 +47,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform _bottomLadderChecker;
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _ladderMask;
-    [SerializeField] private LayerMask _stairMask;
 
     private Animator _animator;
     private Vector2 _moveVector;
@@ -111,20 +110,27 @@ public class PlayerController : MonoBehaviour
             _spriteRenderer.sortingOrder = 4;
         }
 
-        if (collision.tag == "Enemy")
+        if (collision.TryGetComponent(out Enemy enemy))
         {
             Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
+            
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.tag == "LadderStairs")
+        if (collision.TryGetComponent(out LadderStair ladderStair))
         {
             Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), false);
             _isIgnoreStairCollider = false;
-            _spriteRenderer.sortingOrder = 5;
+            _spriteRenderer.sortingOrder = 7;
+
         }
+    }
+
+    public void TakeHit(float damage)
+    {
+        _animator.SetTrigger(PlayerAnimator.Params.HitTrigger);
     }
 
     #region BaseMove
@@ -263,9 +269,9 @@ public class PlayerController : MonoBehaviour
     {
         if (_isOnLadder)
         {
+            
             _rb.bodyType = RigidbodyType2D.Kinematic;
             _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
-
         }
         else
         {

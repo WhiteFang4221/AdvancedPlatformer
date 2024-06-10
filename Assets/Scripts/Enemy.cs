@@ -26,13 +26,13 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform _attackPoint;
     [SerializeField] private Transform _obstacleRayObject;
     [SerializeField] private Transform _playerPosition;
-    [SerializeField] private Transform _lastPlayerPositionPoint;
     [SerializeField] private LayerMask _playerDetectingMask;
     [SerializeField] private float _obstacleRayDistance;
     [SerializeField] private float _obstacleRayDistanceBehind;
     [SerializeField] private float _speed;
     [SerializeField] private float _damage;
 
+    private Transform _lastPlayerPositionPoint;
     private Animator _animator;
     private Transform[] _points;
 
@@ -211,7 +211,7 @@ public class Enemy : MonoBehaviour
         Collider2D player = Physics2D.OverlapCircle(_attackPoint.transform.position, _attackRadius, _playerDetectingMask);
         if (player != null)
         {
-            //player.GetComponent<PlayerController>().TakeHit(_damage);
+            player.GetComponent<PlayerController>().TakeHit(_damage);
         }
         
     }
