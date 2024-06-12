@@ -1,8 +1,10 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(CapsuleCollider2D))]
 
 public static class PlayerAnimator
 {
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 _moveVector;
     private Rigidbody2D _rb;
     private SpriteRenderer _spriteRenderer;
+    private CapsuleCollider2D _capsuleCollider;
 
     private float _groundCheckRadius;
     private float _rollingTime = 0.5f;
@@ -72,6 +75,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _capsuleCollider = GetComponent<CapsuleCollider2D>();
         _rb = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _groundCheckRadius = _groundChecker.GetComponent<CircleCollider2D>().radius;
@@ -103,28 +107,26 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out LadderStair ladderStair))
+        if (collision.TryGetComponent(out Platform platform))
         {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
+            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), _capsuleCollider, true);
             _isIgnoreStairCollider = true;
-            _spriteRenderer.sortingOrder = 4;
+            _spriteRenderer.sortingOrder = 3;
         }
 
         if (collision.TryGetComponent(out Enemy enemy))
         {
-            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), GetComponent<CapsuleCollider2D>(), true);
-            
+            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), _capsuleCollider, true);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out LadderStair ladderStair))
+        if (collision.TryGetComponent(out Platform platform))
         {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), GetComponent<CapsuleCollider2D>(), false);
+            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), _capsuleCollider, false);
             _isIgnoreStairCollider = false;
             _spriteRenderer.sortingOrder = 7;
-
         }
     }
 
@@ -136,7 +138,6 @@ public class PlayerController : MonoBehaviour
     #region BaseMove
     private void Walk()
     {
-
         _moveVector.x = Input.GetAxisRaw("Horizontal");
 
         if (!_isOnLadder)
@@ -269,7 +270,6 @@ public class PlayerController : MonoBehaviour
     {
         if (_isOnLadder)
         {
-            
             _rb.bodyType = RigidbodyType2D.Kinematic;
             _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
         }
