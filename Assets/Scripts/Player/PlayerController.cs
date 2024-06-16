@@ -12,13 +12,14 @@ public static class PlayerAnimator
     {
         public const string SpeedX = "SpeedX";
         public const string SpeedY = "SpeedY";
-        public const string JumpTrigger = "JumpTrigger";
         public const string IsOnGround = "IsOnGround";
-        public const string IsRolling = "IsRolling";
-        public const string RollTrigger = "RollTrigger";
         public const string IsOnLadder = "IsOnLadder";
-        public const string AttackTrigger = "AttackTrigger";
+        public const string IsRolling = "IsRolling";
+        public const string IsDeath = "IsDeath";
+        public const string JumpTrigger = "JumpTrigger";
+        public const string RollTrigger = "RollTrigger";
         public const string HitTrigger = "HitTrigger"; 
+        public const string AttackTrigger = "AttackTrigger";
     }
 
     public static class States
@@ -29,11 +30,7 @@ public static class PlayerAnimator
         public const string Fall = nameof(Fall);
         public const string Landing = nameof(Landing);
         public const string Roll = nameof(Roll);
-        public const string Climb = nameof(Climb);
         public const string BaseAttack = nameof(BaseAttack);
-        public const string SecondAttack = nameof(SecondAttack);
-        public const string ThirdAttack = nameof(ThirdAttack);
-        public const string FourthAttack = nameof(FourthAttack);
         public const string KnightTakeDamage = nameof(KnightTakeDamage);
     }
 }
@@ -50,11 +47,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask _groundLayer;
     [SerializeField] private LayerMask _ladderMask;
 
-    private Animator _animator;
-    private Vector2 _moveVector;
     private Rigidbody2D _rb;
+    private Animator _animator;
     private SpriteRenderer _spriteRenderer;
     private CapsuleCollider2D _capsuleCollider;
+    private Vector2 _moveVector;
+    private Coroutine _rollCoroutine;
 
     private float _groundCheckRadius;
     private float _rollingTime = 0.5f;
@@ -67,7 +65,7 @@ public class PlayerController : MonoBehaviour
     private bool _isOnGround;
     private bool _isIgnoreStairCollider = false;
     private bool _isOnLadder;
-    private bool _isRolling;
+    private bool _isRolling = false;
     private bool _isLadderCheck;
     private bool _isBottomLadderCheck;
     private bool _isLadderPositionCorrected = true;
@@ -85,23 +83,24 @@ public class PlayerController : MonoBehaviour
     {
         if (!_isRolling)
         {
-            Walk();
+            Move();
         }
 
-        Reflect();
-        CheckGround();
+        TurnAround();
+
         CheckLadder();
-        CatchLadder();
         FindPositionOnLadder();
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) )
         {
             Jump();
         }
+        
+         CheckGround();
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && _isCanRoll == true && _isOnGround == true)
         {
-            StartCoroutine(Roll());
+            _rollCoroutine = StartCoroutine(Roll());
         }
     }
 
@@ -114,7 +113,7 @@ public class PlayerController : MonoBehaviour
             _spriteRenderer.sortingOrder = 3;
         }
 
-        if (collision.TryGetComponent(out Enemy enemy))
+        if (collision.TryGetComponent(out DarkWizard enemy))
         {
             Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), _capsuleCollider, true);
         }
@@ -135,28 +134,6 @@ public class PlayerController : MonoBehaviour
         _animator.SetTrigger(PlayerAnimator.Params.HitTrigger);
     }
 
-    #region BaseMove
-    private void Walk()
-    {
-        _moveVector.x = Input.GetAxisRaw("Horizontal");
-
-        if (!_isOnLadder)
-        {
-            _rb.velocity = new Vector2(_moveVector.x * _speed, _rb.velocity.y);
-        }
-
-        _animator.SetFloat(PlayerAnimator.Params.SpeedX, Mathf.Abs(_moveVector.x));
-    }
-
-    private void Reflect()
-    {
-        if ((_moveVector.x > 0 && !_isfaceRight || (_moveVector.x < 0 && _isfaceRight)))
-        {
-            transform.localScale *= new Vector2(-1, 1);
-            _isfaceRight = !_isfaceRight;
-        }
-    }
-
     private void CheckGround()
     {
         _isOnGround = Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer);
@@ -170,9 +147,35 @@ public class PlayerController : MonoBehaviour
         _animator.SetFloat(PlayerAnimator.Params.SpeedY, (int)_rb.velocity.y);
     }
 
-    private void Jump()
+    #region BaseMove
+    private void Move()
     {
-        if (_isOnGround && !_isOnLadder && !_isRolling)
+        _moveVector.x = Input.GetAxisRaw("Horizontal");
+
+        if (_isOnLadder == false)
+        {
+            _rb.velocity = new Vector2(_moveVector.x * _speed, _rb.velocity.y);
+        }
+        else
+        {
+            _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
+        }
+
+        _animator.SetFloat(PlayerAnimator.Params.SpeedX, Mathf.Abs(_moveVector.x));
+    }
+
+    private void TurnAround()
+    {
+        if ((_moveVector.x > 0 && !_isfaceRight || (_moveVector.x < 0 && _isfaceRight)))
+        {
+            transform.localScale *= new Vector2(-1, 1);
+            _isfaceRight = !_isfaceRight;
+        }
+    }
+
+    private void Jump()
+     {
+        if (!_isOnLadder && !_isRolling && _isOnGround == true)
         {
             _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
             _animator.SetTrigger(PlayerAnimator.Params.JumpTrigger);
@@ -211,6 +214,7 @@ public class PlayerController : MonoBehaviour
     {
         _isLadderCheck = Physics2D.OverlapPoint(_ladderChecker.position, _ladderMask);
         _isBottomLadderCheck = Physics2D.OverlapPoint(_bottomLadderChecker.position, _ladderMask);
+        CatchLadder();
     }
 
     private void CatchLadder()
@@ -271,7 +275,6 @@ public class PlayerController : MonoBehaviour
         if (_isOnLadder)
         {
             _rb.bodyType = RigidbodyType2D.Kinematic;
-            _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
         }
         else
         {
@@ -283,7 +286,7 @@ public class PlayerController : MonoBehaviour
     {
         if (_isOnLadder && _isLadderPositionCorrected == true)
         {
-            _isLadderPositionCorrected = !_isLadderPositionCorrected;
+            _isLadderPositionCorrected = false;
             _rb.velocity = Vector2.zero;
             ChangePositionOnLadder();
         }
@@ -303,6 +306,7 @@ public class PlayerController : MonoBehaviour
         {
             _ladderCenter = Physics2D.OverlapPoint(_bottomLadderChecker.position, _ladderMask).GetComponent<BoxCollider2D>().bounds.center.x;
         }
+
         transform.position = new Vector2(_ladderCenter, transform.position.y);
     }
     #endregion

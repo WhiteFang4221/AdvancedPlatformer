@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -20,21 +16,20 @@ public static class DarkWizardAnimator
         public const string WizardAttack = nameof(WizardAttack);
     }
 }
-public class Enemy : MonoBehaviour
+public class DarkWizard : Enemy
 {
     [SerializeField] private Transform _path;
     [SerializeField] private Transform _attackPoint;
     [SerializeField] private Transform _obstacleRayObject;
-    [SerializeField] private Transform _playerPosition;
     [SerializeField] private LayerMask _playerDetectingMask;
+
     [SerializeField] private float _obstacleRayDistance;
     [SerializeField] private float _obstacleRayDistanceBehind;
     [SerializeField] private float _speed;
-    [SerializeField] private float _damage;
 
     private Transform _lastPlayerPositionPoint;
     private Animator _animator;
-    private Transform[] _points;
+    private Transform[] _patrolPoints;
 
     private int _currentPoint;
 
@@ -54,11 +49,11 @@ public class Enemy : MonoBehaviour
     {
         _attackRadius = _attackPoint.GetComponent<CircleCollider2D>().radius;
         _animator = GetComponent<Animator>();
-        _points = new Transform[_path.childCount];
+        _patrolPoints = new Transform[_path.childCount];
 
-        for (int i = 0; i < _points.Length; i++)
+        for (int i = 0; i < _patrolPoints.Length; i++)
         {
-            _points[i] = _path.GetChild(i);
+            _patrolPoints[i] = _path.GetChild(i);
         }
     }
 
@@ -132,7 +127,7 @@ public class Enemy : MonoBehaviour
 
     private void Patrol()
     {
-        Transform target = _points[_currentPoint];
+        Transform target = _patrolPoints[_currentPoint];
 
         if (Vector2.Distance(transform.position, target.position) < _minDistance)
         {
@@ -148,7 +143,7 @@ public class Enemy : MonoBehaviour
                 _waitTimer += Time.deltaTime;
             }
 
-            if (_currentPoint >= _points.Length)
+            if (_currentPoint >= _patrolPoints.Length)
             {
                 _currentPoint = 0;
             }
@@ -209,11 +204,11 @@ public class Enemy : MonoBehaviour
     private void Attack()
     {
         Collider2D player = Physics2D.OverlapCircle(_attackPoint.transform.position, _attackRadius, _playerDetectingMask);
+        
         if (player != null)
         {
             player.GetComponent<PlayerController>().TakeHit(_damage);
         }
-        
     }
 }
 

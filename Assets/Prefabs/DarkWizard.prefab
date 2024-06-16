@@ -109,10 +109,10 @@ GameObject:
   - component: {fileID: 1754043443962382126}
   - component: {fileID: 795070982664608616}
   - component: {fileID: 1980640284097910596}
-  - component: {fileID: 30166833814079943}
-  - component: {fileID: 5940506227366183590}
-  - component: {fileID: 225426726125997172}
   - component: {fileID: 8530247268916055203}
+  - component: {fileID: 30166833814079943}
+  - component: {fileID: 225426726125997172}
+  - component: {fileID: 5940506227366183590}
   m_Layer: 9
   m_Name: DarkWizard
   m_TagString: Enemy
@@ -177,7 +177,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 6
   m_Sprite: {fileID: -1493826975, guid: ef5f8e56f186cfb4bb6eb10e18ef8e5f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -210,6 +210,29 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8530247268916055203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7542908229675748597}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a85fdd152c0f234fb331195cc9bdecf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _path: {fileID: 0}
+  _attackPoint: {fileID: 1480530008784253260}
+  _obstacleRayObject: {fileID: 2273544493669646850}
+  _playerPosition: {fileID: 0}
+  _playerDetectingMask:
+    serializedVersion: 2
+    m_Bits: 256
+  _obstacleRayDistance: 20
+  _obstacleRayDistanceBehind: 5
+  _speed: 6
+  _damage: 0
 --- !u!70 &30166833814079943
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -245,33 +268,6 @@ CapsuleCollider2D:
   m_Offset: {x: -0.72649, y: 1.8207953}
   m_Size: {x: 1.4458656, y: 3.6669946}
   m_Direction: 0
---- !u!50 &5940506227366183590
-Rigidbody2D:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDrag: 0
-  m_AngularDrag: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 4
 --- !u!61 &225426726125997172
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -317,26 +313,30 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 10.788111, y: 5.088339}
   m_EdgeRadius: 0
---- !u!114 &8530247268916055203
-MonoBehaviour:
+--- !u!50 &5940506227366183590
+Rigidbody2D:
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a85fdd152c0f234fb331195cc9bdecf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _path: {fileID: 0}
-  _attackPoint: {fileID: 1480530008784253260}
-  _obstacleRayObject: {fileID: 2273544493669646850}
-  _playerPosition: {fileID: 0}
-  _playerDetectingMask:
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 256
-  _obstacleRayDistance: 20
-  _obstacleRayDistanceBehind: 5
-  _speed: 4
-  _damage: 0
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 4
