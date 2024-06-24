@@ -1,31 +1,46 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent (typeof(Animator))]
-public class Enemy : MonoBehaviour
+abstract public class Enemy : MonoBehaviour
 {
-    [SerializeField] protected int _damage;
-    [SerializeField] private int _maxHealth;
+    [SerializeField] protected Animator animator;
+    [SerializeField] private  int maxHealth = 100;
+    [SerializeField] private int currentHealth;
+    [SerializeField] private float speed;
+    [SerializeField] private int damage;
+    [SerializeField] private LayerMask _deathMask;
+    private bool isDead = false;
 
-    private Animator _animator;
-
-    private int _health;
-    private bool _isDead = false;
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
-        _health = _maxHealth;
+        animator = GetComponent<Animator>();
+        currentHealth = maxHealth;
     }
-
-    private void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
-        _health -= damage;
+        currentHealth -= damage;
+        animator.SetTrigger(EnemyAnimationStrings.Params.HitTrigger);
 
-        if (_health <= 0)
+        if (currentHealth <= 0)
         {
-            _isDead = true;
+            Die();
         }
     }
 
+    protected virtual void Die()
+    {
+        isDead = true;
+        gameObject.layer = _deathMask;
+        StartCoroutine(Despawn());
+    }
 
+
+    private IEnumerator Despawn()
+    {
+        animator.SetBool(EnemyAnimationStrings.Params.IsDead, isDead);
+        yield return new WaitForSeconds(5);
+        Destroy(gameObject);
+    }
 }

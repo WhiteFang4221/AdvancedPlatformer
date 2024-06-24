@@ -1,18 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private int _maxHealth = 10000;
+
+    public Action PlayerDied;
+    public Action PlayerHit;
+
+    private int _currentHealth;
+
+    private void Start()
     {
-        
+        _currentHealth = _maxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage(int damage)
     {
-        
+        _currentHealth-=damage;
+        PlayerHit.Invoke();
+
+        if ( _currentHealth <= 0)
+        {
+            PlayerDied.Invoke();
+        }
+    }
+
+    public void Heal(int healPoints)
+    {
+        _currentHealth+=healPoints;
+
+        if (_currentHealth > _maxHealth)
+        {
+            _currentHealth=_maxHealth;
+        }
     }
 }

@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class PickingUpCoin : MonoBehaviour
+public class CoinCollector : MonoBehaviour
 {
     [SerializeField] private AudioSource _audioSource;
 

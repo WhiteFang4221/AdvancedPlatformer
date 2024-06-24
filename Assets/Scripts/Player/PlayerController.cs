@@ -1,25 +1,27 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.Tilemaps;
+using UnityEngine.InputSystem;
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(CapsuleCollider2D))]
-
+[RequireComponent(typeof(PlayerHealth))]
 public static class PlayerAnimator
 {
     public static class Params
     {
-        public const string SpeedX = "SpeedX";
-        public const string SpeedY = "SpeedY";
-        public const string IsOnGround = "IsOnGround";
+        public const string IsMoving = "IsMoving";
+        public const string IsGrounded = "IsGrounded";
+        public const string yVelocity = "yVelocity";
+        public const string JumpTrigger = "JumpTrigger";
+        public const string AttackTrigger = "AttackTrigger";
+        public const string IsCanMove = "IsCanMove";
         public const string IsOnLadder = "IsOnLadder";
+        public const string RollTrigger = "RollTrigger";
         public const string IsRolling = "IsRolling";
         public const string IsDeath = "IsDeath";
-        public const string JumpTrigger = "JumpTrigger";
-        public const string RollTrigger = "RollTrigger";
-        public const string HitTrigger = "HitTrigger"; 
-        public const string AttackTrigger = "AttackTrigger";
+        public const string HitTrigger = "HitTrigger";
     }
 
     public static class States
@@ -37,279 +39,183 @@ public static class PlayerAnimator
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float _speed = 12f;
-    [SerializeField] private float _climbSpeed = 4f;
+    [SerializeField] private float _moveSpeed = 12f;
+    [SerializeField] private float _airMoveSpeed = 10f;
+    [SerializeField] private float _ladderSpeed = 4f;
     [SerializeField] private float _jumpForce = 10f;
-    [SerializeField] private float _rollPower = 15;
-    [SerializeField] private Transform _groundChecker;
-    [SerializeField] private Transform _ladderChecker;
-    [SerializeField] private Transform _bottomLadderChecker;
-    [SerializeField] private LayerMask _groundLayer;
-    [SerializeField] private LayerMask _ladderMask;
+    [SerializeField] private float _rollPower = 20f;
 
-    private Rigidbody2D _rb;
+    private GroundChecker _groundChecker;
+    private LadderController _ladderChecker;
+    private Rigidbody2D _rigidBody;
     private Animator _animator;
-    private SpriteRenderer _spriteRenderer;
-    private CapsuleCollider2D _capsuleCollider;
-    private Vector2 _moveVector;
-    private Coroutine _rollCoroutine;
+    [SerializeField] private Vector2 _moveInput;
 
-    private float _groundCheckRadius;
-    private float _rollingTime = 0.5f;
-    private float _rollCooldown = 0;
-    private float _ladderCenter;
-    private float _verticalInput;
+    private float _rollCooldown = 1;
 
-    private bool _isfaceRight = true;
+    private bool _isFaceRight = true;
     private bool _isCanRoll = true;
-    private bool _isOnGround;
-    private bool _isIgnoreStairCollider = false;
-    private bool _isOnLadder;
-    private bool _isRolling = false;
-    private bool _isLadderCheck;
-    private bool _isBottomLadderCheck;
-    private bool _isLadderPositionCorrected = true;
+    private bool _isMoving;
 
-    private void Start()
+    #region Свойства
+    public Vector2 MoveInput
     {
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-        _capsuleCollider = GetComponent<CapsuleCollider2D>();
-        _rb = GetComponent<Rigidbody2D>();
+        get
+        {
+            return _moveInput;
+        }
+    }
+
+    public bool IsMoving
+    {
+        get
+        {
+            return _isMoving;
+        }
+        private set
+        {
+            _isMoving = value;
+            _animator.SetBool(PlayerAnimator.Params.IsMoving, value);
+        }
+    }
+
+    public bool IsCanMove
+    {
+        get
+        {
+            return _animator.GetBool(PlayerAnimator.Params.IsCanMove);
+        }
+    }
+
+    public bool IsRolling
+    {
+        get
+        {
+            return _animator.GetBool(PlayerAnimator.Params.IsRolling);
+        }
+    }
+
+    public float CurrentSpeed
+    {
+        get
+        {
+            if (IsCanMove)
+            {
+                if (_isMoving)
+                {
+                    if (_groundChecker.IsGrounded)
+                    {
+                        return _moveSpeed;
+                    }
+                    else
+                    {
+                        return _airMoveSpeed;
+                    }
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            else if (_ladderChecker.IsOnLadder)
+            {
+                return _ladderSpeed;
+            }
+            {
+                return 0;
+            }
+        }
+    }
+    #endregion
+
+    private void Awake()
+    {
+        _rigidBody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _groundCheckRadius = _groundChecker.GetComponent<CircleCollider2D>().radius;
+        _groundChecker = GetComponent<GroundChecker>();
+        _ladderChecker = GetComponent<LadderController>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (!_isRolling)
-        {
-            Move();
-        }
-
         TurnAround();
-
-        CheckLadder();
-        FindPositionOnLadder();
-
-        if (Input.GetKeyDown(KeyCode.Space) )
+        if (IsCanMove && IsRolling == false)
         {
-            Jump();
+            _rigidBody.velocity = new Vector2(_moveInput.x * CurrentSpeed, _rigidBody.velocity.y);
+            _animator.SetFloat(PlayerAnimator.Params.yVelocity, _rigidBody.velocity.y);
         }
-        
-         CheckGround();
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && _isCanRoll == true && _isOnGround == true)
+        else if (_ladderChecker.IsOnLadder)
         {
-            _rollCoroutine = StartCoroutine(Roll());
+            _rigidBody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
+            _animator.SetFloat(PlayerAnimator.Params.yVelocity, _rigidBody.velocity.y);
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    #region Input System
+    public void Move(InputAction.CallbackContext context)
     {
-        if (collision.TryGetComponent(out Platform platform))
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), _capsuleCollider, true);
-            _isIgnoreStairCollider = true;
-            _spriteRenderer.sortingOrder = 3;
-        }
-
-        if (collision.TryGetComponent(out DarkWizard enemy))
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), _capsuleCollider, true);
-        }
+        _moveInput = context.ReadValue<Vector2>();
+        IsMoving = MoveInput.x != 0;
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    public void Jump(InputAction.CallbackContext context)
     {
-        if (collision.TryGetComponent(out Platform platform))
+        if (context.started)
         {
-            Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), _capsuleCollider, false);
-            _isIgnoreStairCollider = false;
-            _spriteRenderer.sortingOrder = 7;
+            if (_groundChecker.IsGrounded && IsCanMove)
+            {
+                _animator.SetTrigger(PlayerAnimator.Params.JumpTrigger);
+                _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _jumpForce);
+            }
+            else if (_ladderChecker.IsOnLadder == true)
+            {
+                _animator.SetBool(PlayerAnimator.Params.IsOnLadder, false);
+            }
         }
+
     }
 
-    public void TakeHit(float damage)
+    public void Attack(InputAction.CallbackContext context)
     {
-        _animator.SetTrigger(PlayerAnimator.Params.HitTrigger);
+        if (context.started && _groundChecker.IsGrounded)
+        {
+            _animator.SetTrigger(PlayerAnimator.Params.AttackTrigger);
+        }
     }
 
-    private void CheckGround()
+    public void RollOver(InputAction.CallbackContext context)
     {
-        _isOnGround = Physics2D.OverlapCircle(_groundChecker.position, _groundCheckRadius, _groundLayer);
-
-        if (_isIgnoreStairCollider == true)
+        if (context.performed && _groundChecker.IsGrounded && IsCanMove && _isCanRoll)
         {
-            _isOnGround = false;
-        }
-
-        _animator.SetBool(PlayerAnimator.Params.IsOnGround, _isOnGround);
-        _animator.SetFloat(PlayerAnimator.Params.SpeedY, (int)_rb.velocity.y);
-    }
-
-    #region BaseMove
-    private void Move()
-    {
-        _moveVector.x = Input.GetAxisRaw("Horizontal");
-
-        if (_isOnLadder == false)
-        {
-            _rb.velocity = new Vector2(_moveVector.x * _speed, _rb.velocity.y);
-        }
-        else
-        {
-            _rb.velocity = new Vector2(_rb.velocity.x, _verticalInput * _climbSpeed);
-        }
-
-        _animator.SetFloat(PlayerAnimator.Params.SpeedX, Mathf.Abs(_moveVector.x));
-    }
-
-    private void TurnAround()
-    {
-        if ((_moveVector.x > 0 && !_isfaceRight || (_moveVector.x < 0 && _isfaceRight)))
-        {
-            transform.localScale *= new Vector2(-1, 1);
-            _isfaceRight = !_isfaceRight;
+            StartCoroutine(Dash());
         }
     }
+    #endregion
 
-    private void Jump()
-     {
-        if (!_isOnLadder && !_isRolling && _isOnGround == true)
-        {
-            _rb.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);
-            _animator.SetTrigger(PlayerAnimator.Params.JumpTrigger);
-        }
-        else if (_isOnLadder)
-        {
-            _isOnLadder = false;
-        }
-    }
-
-    private IEnumerator Roll()
+    private IEnumerator Dash()
     {
         _isCanRoll = false;
-        _isRolling = true;
-        _rb.velocity = new Vector2(0, 0);
+        _rigidBody.velocity = new Vector2(0, 0);
         _animator.SetTrigger(PlayerAnimator.Params.RollTrigger);
 
-        if (_isfaceRight)
+        if (_isFaceRight)
         {
-            _rb.AddForce(new Vector2(_rollPower, 0f), ForceMode2D.Impulse);
+            _rigidBody.AddForce(new Vector2(_rollPower, 0f), ForceMode2D.Impulse);
         }
         else
         {
-            _rb.AddForce(new Vector2(_rollPower * (-1), 0f), ForceMode2D.Impulse);
+            _rigidBody.AddForce(new Vector2(_rollPower * (-1), 0f), ForceMode2D.Impulse);
         }
 
-        yield return new WaitForSeconds(_rollingTime);
-        _isRolling = false;
         yield return new WaitForSeconds(_rollCooldown);
         _isCanRoll = true;
     }
-    #endregion
-
-    #region Ladder
-    private void CheckLadder()
+    private void TurnAround()
     {
-        _isLadderCheck = Physics2D.OverlapPoint(_ladderChecker.position, _ladderMask);
-        _isBottomLadderCheck = Physics2D.OverlapPoint(_bottomLadderChecker.position, _ladderMask);
-        CatchLadder();
-    }
-
-    private void CatchLadder()
-    {
-        if (!_isRolling)
+        if ((_moveInput.x > 0 && _isFaceRight == false || (_moveInput.x < 0 && _isFaceRight == true)))
         {
-            _verticalInput = Input.GetAxisRaw("Vertical");
-        }
-
-        if (_isLadderCheck || _isBottomLadderCheck)
-        {
-            if (_isLadderCheck == false && _isBottomLadderCheck == true) // Сверху
-            {
-                if (_verticalInput > 0)
-                {
-                    _isOnLadder = false;
-                }
-                else if (_verticalInput < 0)
-                {
-                    _isOnLadder = true;
-                }
-            }
-            else if (_isLadderCheck == true && _isBottomLadderCheck == true) // на лестнице
-            {
-                if (_verticalInput > 0)
-                {
-                    _isOnLadder = true;
-                }
-                else if (_verticalInput < 0)
-                {
-                    _isOnLadder = true;
-                }
-            }
-            else if (_isLadderCheck == true && _isBottomLadderCheck == false) // внизу
-            {
-                if (_verticalInput > 0)
-                {
-                    _isOnLadder = true;
-                }
-                else if (_verticalInput < 0)
-                {
-                    _isOnLadder = false;
-                }
-            }
-        }
-        else
-        {
-            _isOnLadder = false;
-        }
-
-        ChangeBodyTypeOnLadder();
-
-        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, _isOnLadder);
-    }
-
-    private void ChangeBodyTypeOnLadder()
-    {
-        if (_isOnLadder)
-        {
-            _rb.bodyType = RigidbodyType2D.Kinematic;
-        }
-        else
-        {
-            _rb.bodyType = RigidbodyType2D.Dynamic;
+            transform.localScale *= new Vector2(-1, 1);
+            _isFaceRight = !_isFaceRight;
         }
     }
-
-    private void FindPositionOnLadder()
-    {
-        if (_isOnLadder && _isLadderPositionCorrected == true)
-        {
-            _isLadderPositionCorrected = false;
-            _rb.velocity = Vector2.zero;
-            ChangePositionOnLadder();
-        }
-        else if (!_isOnLadder && !_isLadderPositionCorrected)
-        {
-            _isLadderPositionCorrected = true;
-        }
-    }
-
-    private void ChangePositionOnLadder()
-    {
-        if (_isLadderCheck)
-        {
-            _ladderCenter = Physics2D.OverlapPoint(_ladderChecker.position, _ladderMask).GetComponent<BoxCollider2D>().bounds.center.x;
-        }
-        else if (_bottomLadderChecker)
-        {
-            _ladderCenter = Physics2D.OverlapPoint(_bottomLadderChecker.position, _ladderMask).GetComponent<BoxCollider2D>().bounds.center.x;
-        }
-
-        transform.position = new Vector2(_ladderCenter, transform.position.y);
-    }
-    #endregion
 }
-
-
