@@ -1,7 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerController), typeof(Rigidbody2D), typeof(Animator))]
+[RequireComponent (typeof(SpriteRenderer))]
+
 public class LadderController : MonoBehaviour
 {
     [SerializeField] private Transform _ladderChecker;
@@ -21,7 +22,7 @@ public class LadderController : MonoBehaviour
     {
         get
         {
-            return _animator.GetBool(PlayerAnimator.Params.IsOnLadder);
+            return _animator.GetBool(PlayerAnimator.IsOnLadder);
         }
     }
 
@@ -63,43 +64,43 @@ public class LadderController : MonoBehaviour
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, false);
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, false);
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
                     }
                 }
                 else if (_isLadderCheck == true && _isBottomLadderCheck == true) // на лестнице
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, true) ;
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, true) ;
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
                     }
                 }
                 else if (_isLadderCheck == true && _isBottomLadderCheck == false) // внизу
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.Params.IsOnLadder, false);
+                        _animator.SetBool(PlayerAnimator.IsOnLadder, false);
                     }
                 }
             }
             else
             {
-                _animator.SetBool(PlayerAnimator.Params.IsOnLadder, false);
+                _animator.SetBool(PlayerAnimator.IsOnLadder, false);
             }
 
             ChangeBodyTypeOnLadder();
-            _animator.SetBool(PlayerAnimator.Params.IsOnLadder, IsOnLadder);
+            _animator.SetBool(PlayerAnimator.IsOnLadder, IsOnLadder);
         }
     }
 
@@ -108,10 +109,12 @@ public class LadderController : MonoBehaviour
         if (IsOnLadder)
         {
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
+
         }
         else
         {
             _rigidbody.bodyType = RigidbodyType2D.Dynamic;
+
         }
     }
 

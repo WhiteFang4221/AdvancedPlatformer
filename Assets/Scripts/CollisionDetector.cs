@@ -1,11 +1,11 @@
 using UnityEngine;
 
 [RequireComponent (typeof(CapsuleCollider2D), typeof(SpriteRenderer))]
+
 public class CollisionDetector : MonoBehaviour
 {
     private CapsuleCollider2D _capsuleCollider;
     private SpriteRenderer _spriteRenderer;
-
     private int _minOrder = 3;
     private int _defaultOrder = 7;
 
@@ -24,11 +24,6 @@ public class CollisionDetector : MonoBehaviour
             Physics2D.IgnoreCollision(collision.GetComponent<EdgeCollider2D>(), _capsuleCollider, true);
             IsIgnorePlatformCollider = true;
             _spriteRenderer.sortingOrder = _minOrder;
-        }
-
-        if (collision.TryGetComponent(out Enemy enemy))
-        {
-            Physics2D.IgnoreCollision(collision.GetComponent<CapsuleCollider2D>(), _capsuleCollider, true);
         }
     }
 
