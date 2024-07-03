@@ -10,10 +10,11 @@ using UnityEngine.InputSystem;
 
 public static class PlayerAnimator
 {
-    public const string IsMoving = "IsMoving";
+    public const string IsMovingX = "IsMovingX";
+    public const string IsMovingY = "IsMovingY";
     public const string IsGrounded = "IsGrounded";
     public const string yVelocity = "yVelocity";
-    public const string JumpTrigger = "JumpTrigger";
+    public const string IsJumping = "IsJumping";
     public const string AttackTrigger = "AttackTrigger";
     public const string IsCanMove = "IsCanMove";
     public const string IsOnLadder = "IsOnLadder";
@@ -22,6 +23,8 @@ public static class PlayerAnimator
     public const string IsDeath = "IsDeath";
     public const string HitTrigger = "HitTrigger";
     public const string IsAlive = "IsAlive";
+    public const string IsLockVelocity = "IsLockVelocity";
+    public const string IsAttacking = "IsAttacking";
 }
 
 public class PlayerController : MonoBehaviour
@@ -33,15 +36,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _rollPower = 20f;
     [SerializeField] private Vector2 _moveInput;
 
-    private Rigidbody2D _rigidBody;
+    private Rigidbody2D _rigidbody;
     private Animator _animator;
     private LadderController _ladderChecker;
     private SurfacesChecker _groundChecker;
+    private PlayerHealthManager _playerHealthManager;
 
     private float _rollCooldown = 1;
     private bool _isFaceRight = true;
     private bool _isCanRoll = true;
-    private bool _isMoving;
+    private bool _isMovingX;
+    private float _walkstopRate = 0.2f;
+    private float _moveStopRate = 0.1f;
+
+    //private bool _isMovingY;
 
     #region Свойства
     public Vector2 MoveInput
@@ -52,16 +60,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public bool IsMoving
+    public bool IsMovingX
     {
         get
         {
-            return _isMoving;
+            return _isMovingX;
         }
         private set
         {
-            _isMoving = value;
-            _animator.SetBool(PlayerAnimator.IsMoving, value);
+            _isMovingX = value;
+            _animator.SetBool(PlayerAnimator.IsMovingX, value);
         }
     }
 
@@ -94,7 +102,7 @@ public class PlayerController : MonoBehaviour
         {
             if (IsCanMove)
             {
-                if (_isMoving)
+                if (IsMovingX)
                 {
                     if (_groundChecker.IsGrounded)
                     {
@@ -105,15 +113,16 @@ public class PlayerController : MonoBehaviour
                         return _airMoveSpeed;
                     }
                 }
+                else if (_ladderChecker.IsOnLadder)
+                {
+                    return _ladderSpeed;
+                }
                 else
                 {
                     return 0;
                 }
             }
-            else if (_ladderChecker.IsOnLadder)
-            {
-                return _ladderSpeed;
-            }
+            else
             {
                 return 0;
             }
@@ -127,28 +136,56 @@ public class PlayerController : MonoBehaviour
             return _animator.GetBool(PlayerAnimator.IsAlive);
         }
     }
+
+    public bool IsAttacking
+    {
+        get
+        {
+            return _animator.GetBool(PlayerAnimator.IsAttacking);
+        }
+    }
     #endregion
 
     private void Awake()
     {
-        _rigidBody = GetComponent<Rigidbody2D>();
+        _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _groundChecker = GetComponent<SurfacesChecker>();
         _ladderChecker = GetComponent<LadderController>();
+        _playerHealthManager = GetComponent<PlayerHealthManager>();
+    }
+
+    private void OnEnable()
+    {
+        _playerHealthManager.HitTaken += OnHit;
+    }
+
+    private void OnDisable()
+    {
+        _playerHealthManager.HitTaken -= OnHit;
     }
 
     private void FixedUpdate()
     {
-        if (IsCanMove && IsRolling == false)
+        if (_ladderChecker.IsOnLadder)
+        {
+            IsMovingX = false;
+            _rigidbody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
+            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
+        }
+        else if (IsCanMove && IsRolling == false)
         {
             TurnAround();
-            _rigidBody.velocity = new Vector2(_moveInput.x * CurrentSpeed, _rigidBody.velocity.y);
-            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidBody.velocity.y);
+            _rigidbody.velocity = new Vector2(_moveInput.x * CurrentSpeed, _rigidbody.velocity.y);
+            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
         }
-        else if (_ladderChecker.IsOnLadder)
+        else if (IsAttacking)
         {
-            _rigidBody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
-            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidBody.velocity.y);
+            _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);
+        }
+        else if (IsAlive == false)
+        {
+            _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _moveStopRate), _rigidbody.velocity.y);
         }
     }
 
@@ -156,7 +193,7 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         _moveInput = context.ReadValue<Vector2>();
-        IsMoving = MoveInput.x != 0;
+        IsMovingX = MoveInput.x != 0;
     }
 
     public void Jump(InputAction.CallbackContext context)
@@ -165,8 +202,8 @@ public class PlayerController : MonoBehaviour
         {
             if (_groundChecker.IsGrounded && IsCanMove)
             {
-                _animator.SetTrigger(PlayerAnimator.JumpTrigger);
-                _rigidBody.velocity = new Vector2(_rigidBody.velocity.x, _jumpForce);
+                _animator.SetBool(PlayerAnimator.IsJumping, true);
+                _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _jumpForce);
             }
             else if (_ladderChecker.IsOnLadder == true)
             {
@@ -195,16 +232,16 @@ public class PlayerController : MonoBehaviour
     private IEnumerator Dash()
     {
         _isCanRoll = false;
-        _rigidBody.velocity = new Vector2(0, 0);
+        _rigidbody.velocity = new Vector2(0, 0);
         _animator.SetTrigger(PlayerAnimator.RollTrigger);
 
         if (_isFaceRight)
         {
-            _rigidBody.AddForce(new Vector2(_rollPower, 0f), ForceMode2D.Impulse);
+            _rigidbody.AddForce(new Vector2(_rollPower, 0f), ForceMode2D.Impulse);
         }
         else
         {
-            _rigidBody.AddForce(new Vector2(_rollPower * (-1), 0f), ForceMode2D.Impulse);
+            _rigidbody.AddForce(new Vector2(_rollPower * (-1), 0f), ForceMode2D.Impulse);
         }
 
         yield return new WaitForSeconds(_rollCooldown);
@@ -219,5 +256,10 @@ public class PlayerController : MonoBehaviour
             transform.localScale *= new Vector2(-1, 1);
             _isFaceRight = !_isFaceRight;
         }
+    }
+
+    private void OnHit(int damage, Vector2 knockback)
+    {
+        _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
     }
 }

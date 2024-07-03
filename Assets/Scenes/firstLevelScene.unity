@@ -64384,14 +64384,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3581743362487419693, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
-      propertyPath: m_Size.x
-      value: 3.5205078
-      objectReference: {fileID: 0}
-    - target: {fileID: 3581743362487419693, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
-      propertyPath: m_Offset.x
-      value: 1.4001236
-      objectReference: {fileID: 0}
     - target: {fileID: 7542908229675748597, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
       propertyPath: m_Name
       value: DarkWizard
@@ -80790,6 +80782,10 @@ PrefabInstance:
       propertyPath: _audioSource
       value: 
       objectReference: {fileID: 1079084858}
+    - target: {fileID: 9049296615843677316, guid: 650ab2549afa025468499197bf969f39, type: 3}
+      propertyPath: _maxHealth
+      value: 1000
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

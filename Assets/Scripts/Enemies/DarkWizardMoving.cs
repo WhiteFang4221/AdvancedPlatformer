@@ -17,7 +17,7 @@ public class DarkWizardMoving : MonoBehaviour
     private Animator _animator;
     private Rigidbody2D _rigidbody;
     private SurfacesChecker _surfacesChecker;
-
+    private EnemyHealthManager _enemyHealthManager;
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
     
     private bool _isMoving = true;
@@ -70,21 +70,6 @@ public class DarkWizardMoving : MonoBehaviour
         }
     }
 
-    public bool IsCanMove
-    {
-        get
-        {
-            if (IsAlive)
-            {
-                return _animator.GetBool(EnemyStringsAnimator.IsCanMove);
-            }
-            else
-            {
-                return false;
-            }
-        }
-    }
-
     public bool IsAlive
     {
         get
@@ -99,6 +84,17 @@ public class DarkWizardMoving : MonoBehaviour
         _animator = GetComponent<Animator>();
         _surfacesChecker = GetComponent<SurfacesChecker>();
         _detectionPlayer = GetComponent<DetectionPlayer>();
+        _enemyHealthManager = GetComponent<EnemyHealthManager>();
+    }
+
+    private void OnEnable()
+    {
+        _enemyHealthManager.HitTaken += OnHit;
+    }
+
+    private void OnDisable()
+    {
+        _enemyHealthManager.HitTaken -= OnHit;
     }
 
     private void Update()
@@ -151,5 +147,10 @@ public class DarkWizardMoving : MonoBehaviour
         {
             Debug.LogError("не установлено значение влево или вправо");
         }
+    }
+
+    private void OnHit(int damage, Vector2 knockback)
+    {
+        _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
     }
 }

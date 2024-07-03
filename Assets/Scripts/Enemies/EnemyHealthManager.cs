@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
-public class PlayerHealthManager : MonoBehaviour
+public class EnemyHealthManager : MonoBehaviour
 {
     [SerializeField] private int _maxHealth = 10000;
     [SerializeField] private int _currentHealth;
@@ -11,10 +10,9 @@ public class PlayerHealthManager : MonoBehaviour
     public Action <int, Vector2> HitTaken;
 
     private Animator _animator;
-    private float _timeHitLeft = 0;
+
 
     private bool _isAlive = true;
-    private bool _isInvincible;
 
     public bool IsAlive
     {
@@ -26,7 +24,7 @@ public class PlayerHealthManager : MonoBehaviour
         private set
         {
             _isAlive = value;
-            _animator.SetBool(PlayerAnimator.IsAlive, value);
+            _animator.SetBool(EnemyStringsAnimator.IsAlive, value);
         }
     }
 
@@ -36,31 +34,16 @@ public class PlayerHealthManager : MonoBehaviour
         _currentHealth = _maxHealth;
     }
 
-    private void Update()
-    {
-        if (_isInvincible)
-        {
-            if (_timeHitLeft >= _invinsibilityTime)
-            {
-                _isInvincible = false;
-                _timeHitLeft = 0;
-            }
-
-            _timeHitLeft += Time.deltaTime;
-        }
-    }
-
     public void TakeDamage(int damage, Vector2 knockback)
     {
-        if (IsAlive && _isInvincible == false)
+        if (IsAlive )
         {
-            _currentHealth-=damage;
-            _isInvincible = true;
+            _currentHealth -= damage;
             HitTaken?.Invoke(damage, knockback);
-            _animator.SetTrigger(PlayerAnimator.HitTrigger);
+            _animator.SetTrigger(EnemyStringsAnimator.HitTrigger);
         }
 
-        if ( _currentHealth <= 0)
+        if (_currentHealth <= 0)
         {
             IsAlive = false;
         }
