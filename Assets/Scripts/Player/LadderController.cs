@@ -109,7 +109,6 @@ public class LadderController : MonoBehaviour
         if (IsOnLadder)
         {
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
-
         }
         else
         {

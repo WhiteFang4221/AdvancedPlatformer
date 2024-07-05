@@ -188,9 +188,8 @@ GameObject:
   - component: {fileID: 5940506227366183590}
   - component: {fileID: 2227684415796760816}
   - component: {fileID: 8530247268916055203}
-  - component: {fileID: 7371988443952269446}
-  - component: {fileID: 7137089076988702411}
-  - component: {fileID: 3871151736864331837}
+  - component: {fileID: 7124858693402138027}
+  - component: {fileID: 3031639915205782236}
   m_Layer: 3
   m_Name: DarkWizard
   m_TagString: Enemy
@@ -362,9 +361,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4311c19e61fd264eb25803321d0b8bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 50
-  _currentHealth: 0
-  _invinsibilityTime: 0
+  maxHealth: 50
+  currentHealth: 0
 --- !u!114 &8530247268916055203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,9 +375,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a85fdd152c0f234fb331195cc9bdecf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _detectionPlayer: {fileID: 7371988443952269446}
+  _detectionPlayer: {fileID: 3031639915205782236}
   _moveSpeed: 5
---- !u!114 &7371988443952269446
+--- !u!114 &7124858693402138027
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -388,24 +386,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7542908229675748597}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f5f14003aa37874ca527f5b5da45862, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e60691d88074b54d9fd4e05eac9ac4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _attackZone: {fileID: 6485795117035453283}
-  _isHasTarget: 0
---- !u!114 &7137089076988702411
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7e6869c5a7a3154196ad56fb8099e66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _castFilter:
+  castFilter:
     useTriggers: 0
     useLayerMask: 1
     useDepth: 0
@@ -414,16 +398,14 @@ MonoBehaviour:
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 1152
+      m_Bits: 1024
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
-  _groundDistance: 0.05
-  _wallCheckDistance: 1
-  _isGrounded: 0
   _isOnWall: 0
---- !u!114 &3871151736864331837
+  _wallCheckDistance: 2
+--- !u!114 &3031639915205782236
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -432,6 +414,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7542908229675748597}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0168bf7b254eb84aa2fa18260ae73e1, type: 3}
+  m_Script: {fileID: 11500000, guid: bbc383cda55469843a325330947f735b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackZone: {fileID: 6485795117035453283}
+  _isHasTarget: 0

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5517909474879604571}
   - component: {fileID: 9049296615843677316}
   - component: {fileID: 5410766331919165622}
-  - component: {fileID: 7458903414220968929}
+  - component: {fileID: 5633128176207268505}
   - component: {fileID: 7862816559558801313}
   - component: {fileID: 8872868068777918634}
   - component: {fileID: 322885907744225385}
@@ -222,10 +222,6 @@ MonoBehaviour:
     m_ActionId: b732284b-aabf-451e-84ba-d887a1a25268
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: e27f0218-93a7-4457-932f-f155cc43f3fe
-    m_ActionName: Player/Look[/Mouse/delta]
-  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5410766331919165622}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
@@ -313,6 +309,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 945600ae-f154-4306-bba6-131a4e6b69d3
     m_ActionName: Player/RollOver[/Keyboard/leftShift]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5410766331919165622}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Heal
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9f7d566a-ea17-4063-a560-5ddd97fbeac8
+    m_ActionName: Player/Healing[/Keyboard/q]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -330,9 +342,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13bd55d3de8d93c47bbad0981d071f4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 10
-  _currentHealth: 0
+  maxHealth: 100
+  currentHealth: 0
   _invinsibilityTime: 0.5
+  _potionHealQuantity: 3
+  _maxPotionQuantity: 3
+  _healEffectPoint: 30
+  _healCooldown: 1
 --- !u!114 &5410766331919165622
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -345,13 +361,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0259ba62f7089d48b86aeaa5050ff4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _moveSpeed: 12
-  _airMoveSpeed: 10
+  _moveSpeed: 10
+  _airMoveSpeed: 8
   _ladderSpeed: 4
   _jumpForce: 20
   _rollPower: 30
   _moveInput: {x: 0, y: 0}
---- !u!114 &7458903414220968929
+--- !u!114 &5633128176207268505
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -360,10 +376,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 937477063344615792}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7e6869c5a7a3154196ad56fb8099e66, type: 3}
+  m_Script: {fileID: 11500000, guid: e5fa434d1e07f3a45999946d527d3e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _castFilter:
+  castFilter:
     useTriggers: 0
     useLayerMask: 1
     useDepth: 0
@@ -372,15 +388,13 @@ MonoBehaviour:
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 1664
+      m_Bits: 640
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0
     maxNormalAngle: 0
   _groundDistance: 0.05
-  _wallCheckDistance: 2
   _isGrounded: 0
-  _isOnWall: 0
 --- !u!114 &7862816559558801313
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,4 +670,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damage: 10
-  _knockback: {x: 2, y: 0}
+  _knockback: {x: 4, y: 3}

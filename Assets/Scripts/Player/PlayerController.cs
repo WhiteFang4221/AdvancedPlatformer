@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -25,6 +26,8 @@ public static class PlayerAnimator
     public const string IsAlive = "IsAlive";
     public const string IsLockVelocity = "IsLockVelocity";
     public const string IsAttacking = "IsAttacking";
+    public const string IsHealing = "IsHealing";
+    public const string IsHealSucceeded = "IsHealSucceeded";
 }
 
 public class PlayerController : MonoBehaviour
@@ -39,17 +42,15 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private LadderController _ladderChecker;
-    private SurfacesChecker _groundChecker;
+    private PlayerSurfacesChecker _groundChecker;
     private PlayerHealthManager _playerHealthManager;
 
     private float _rollCooldown = 1;
+    private float _walkstopRate = 0.2f;
+    private float _moveStopRate = 0.1f;
     private bool _isFaceRight = true;
     private bool _isCanRoll = true;
     private bool _isMovingX;
-    private float _walkstopRate = 0.2f;
-    private float _moveStopRate = 0.1f;
-
-    //private bool _isMovingY;
 
     #region Свойства
     public Vector2 MoveInput
@@ -108,6 +109,10 @@ public class PlayerController : MonoBehaviour
                     {
                         return _moveSpeed;
                     }
+                    else if (_ladderChecker.IsOnLadder)
+                    {
+                        return _ladderSpeed;
+                    }
                     else
                     {
                         return _airMoveSpeed;
@@ -150,7 +155,7 @@ public class PlayerController : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _groundChecker = GetComponent<SurfacesChecker>();
+        _groundChecker = GetComponent<PlayerSurfacesChecker>();
         _ladderChecker = GetComponent<LadderController>();
         _playerHealthManager = GetComponent<PlayerHealthManager>();
     }
@@ -167,19 +172,19 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_ladderChecker.IsOnLadder)
-        {
-            IsMovingX = false;
-            _rigidbody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
-            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
-        }
-        else if (IsCanMove && IsRolling == false)
+        if (IsCanMove && IsRolling == false && _ladderChecker.IsOnLadder == false)
         {
             TurnAround();
             _rigidbody.velocity = new Vector2(_moveInput.x * CurrentSpeed, _rigidbody.velocity.y);
             _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
         }
-        else if (IsAttacking)
+        else if (_ladderChecker.IsOnLadder)
+        {
+            _rigidbody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
+            _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
+        }
+
+        else if (IsAttacking || _animator.GetBool(PlayerAnimator.IsHealing) == true)
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);
         }
@@ -214,7 +219,7 @@ public class PlayerController : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext context)
     {
-        if (context.started && _groundChecker.IsGrounded && _ladderChecker.IsOnLadder == false)
+        if (context.started && _groundChecker.IsGrounded && _ladderChecker.IsOnLadder == false && IsRolling == false)
         {
             _animator.SetTrigger(PlayerAnimator.AttackTrigger);
         }
@@ -225,6 +230,14 @@ public class PlayerController : MonoBehaviour
         if (context.performed && _groundChecker.IsGrounded && IsCanMove && _isCanRoll)
         {
             StartCoroutine(Dash());
+        }
+    }
+
+    public void Heal(InputAction.CallbackContext context)
+    {
+        if (context.started && IsCanMove && _groundChecker.IsGrounded && _playerHealthManager.PotionHealQuantity > 0)
+        {
+            _animator.SetBool(PlayerAnimator.IsHealing, true);
         }
     }
     #endregion

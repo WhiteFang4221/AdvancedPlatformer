@@ -12,12 +12,12 @@ public class AttackZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        PlayerHealthManager HealthManager = collision.GetComponent<PlayerHealthManager>();
+        HealthManager healthManager = collision.GetComponent<HealthManager>();
 
-        if (HealthManager != null)
+        if (healthManager != null)
         {
             Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? _knockback : new Vector2(-_knockback.x, _knockback.y);
-            HealthManager.TakeDamage(_damage, deliveredKnockback);
+            healthManager.TakeDamage(_damage, deliveredKnockback);
             Debug.Log(collision.name + "Получил Урон " +  _damage);
         }
     }

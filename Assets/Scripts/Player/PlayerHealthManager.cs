@@ -1,39 +1,52 @@
-using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator))]
-public class PlayerHealthManager : MonoBehaviour
+[RequireComponent(typeof(Animator), typeof(PlayerController))]
+public class PlayerHealthManager : HealthManager
 {
-    [SerializeField] private int _maxHealth = 10000;
-    [SerializeField] private int _currentHealth;
+
     [SerializeField] private float _invinsibilityTime = 0.5f;
+    [SerializeField] private int _potionHealQuantity = 0;
+    [SerializeField] private int _maxPotionQuantity = 3;
+    [SerializeField] private int _healEffectPoint = 30;
+    [SerializeField] private float _healCooldown = 1f;
 
-    public Action <int, Vector2> HitTaken;
-
-    private Animator _animator;
+    private float _healCooldownLeft;
     private float _timeHitLeft = 0;
 
-    private bool _isAlive = true;
+    private bool IsCanHeal = true;
     private bool _isInvincible;
 
     public bool IsAlive
     {
         get
         {
-            return _isAlive;
+            return isAlive;
         }
-
         private set
         {
-            _isAlive = value;
-            _animator.SetBool(PlayerAnimator.IsAlive, value);
+            isAlive = value;
+            animator.SetBool(PlayerAnimator.IsAlive, value);
         }
     }
 
-    private void Start()
+    public int PotionHealQuantity
     {
-        _animator = GetComponent<Animator>();
-        _currentHealth = _maxHealth;
+        get
+        {
+            return _potionHealQuantity;
+        }
+        private set
+        {
+            _potionHealQuantity = value;
+        }
+    }
+
+    public bool IsHealSuccsed
+    {
+        get
+        {
+            return animator.GetBool(PlayerAnimator.IsHealSucceeded);
+        }
     }
 
     private void Update()
@@ -48,21 +61,66 @@ public class PlayerHealthManager : MonoBehaviour
 
             _timeHitLeft += Time.deltaTime;
         }
+
+        if (IsHealSuccsed && IsCanHeal)
+        {
+            Heal();
+            IsCanHeal = false;
+        }
+
+        if(IsCanHeal == false)
+        {
+            if (_healCooldownLeft >= _healCooldown)
+            {
+                IsCanHeal = true;
+                _healCooldownLeft = 0;
+            }
+            else
+            {
+                _healCooldownLeft += Time.deltaTime;
+            }
+        }
     }
 
-    public void TakeDamage(int damage, Vector2 knockback)
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out HealPotion potion))
+        {
+            if (_potionHealQuantity < _maxPotionQuantity)
+            {
+                _potionHealQuantity++;
+                Destroy(potion.gameObject);
+            }
+        }
+    }
+
+    public override void TakeDamage(int damage, Vector2 knockback)
     {
         if (IsAlive && _isInvincible == false)
         {
-            _currentHealth-=damage;
+            currentHealth-=damage;
             _isInvincible = true;
             HitTaken?.Invoke(damage, knockback);
-            _animator.SetTrigger(PlayerAnimator.HitTrigger);
+            animator.SetTrigger(PlayerAnimator.HitTrigger);
         }
 
-        if ( _currentHealth <= 0)
+        if ( currentHealth <= 0)
         {
             IsAlive = false;
+        }
+    }
+
+    private void Heal()
+    {
+        _potionHealQuantity--;
+
+        if (currentHealth + _healEffectPoint >= maxHealth)
+        {
+            currentHealth = maxHealth;
+        }
+        else
+        {
+            currentHealth += _healEffectPoint;
         }
     }
 }

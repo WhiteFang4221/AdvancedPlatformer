@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 
-public class DetectionPlayer : MonoBehaviour
+public class DetectingPlayer : MonoBehaviour
 {
     [SerializeField] private DetectionZone _attackZone;
     [SerializeField] private bool _isHasTarget = false;

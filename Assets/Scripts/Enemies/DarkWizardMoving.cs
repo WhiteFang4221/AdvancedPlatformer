@@ -2,11 +2,11 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SurfacesChecker))]
-[RequireComponent(typeof(DetectionPlayer))]
+[RequireComponent(typeof(DetectingPlayer))]
 
 public class DarkWizardMoving : MonoBehaviour
 {
-    [SerializeField] private DetectionPlayer _detectionPlayer;
+    [SerializeField] private DetectingPlayer _detectionPlayer;
     [SerializeField] private float _moveSpeed = 9f;
 
     public enum WalkableDirection
@@ -16,7 +16,7 @@ public class DarkWizardMoving : MonoBehaviour
 
     private Animator _animator;
     private Rigidbody2D _rigidbody;
-    private SurfacesChecker _surfacesChecker;
+    private EnemySurfacesChecker _surfacesChecker;
     private EnemyHealthManager _enemyHealthManager;
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
     
@@ -82,8 +82,8 @@ public class DarkWizardMoving : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _surfacesChecker = GetComponent<SurfacesChecker>();
-        _detectionPlayer = GetComponent<DetectionPlayer>();
+        _surfacesChecker = GetComponent<EnemySurfacesChecker>();
+        _detectionPlayer = GetComponent<DetectingPlayer>();
         _enemyHealthManager = GetComponent<EnemyHealthManager>();
     }
 
@@ -97,16 +97,13 @@ public class DarkWizardMoving : MonoBehaviour
         _enemyHealthManager.HitTaken -= OnHit;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (_surfacesChecker.IsOnWall)
         {
             StartCoroutine(Stay());
         }
-    }
 
-    private void FixedUpdate()
-    {
         if (IsMoving && _detectionPlayer.IsAttacking == false)
         {
             _rigidbody.velocity = new Vector2(_moveSpeed * _walkDirectionVector.x, _rigidbody.velocity.y);
@@ -119,7 +116,7 @@ public class DarkWizardMoving : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out StayEnemyPoint point))
+        if (collision.TryGetComponent(out EnemyStayPoint point))
         {
             StartCoroutine(Stay());
         }
@@ -137,10 +134,12 @@ public class DarkWizardMoving : MonoBehaviour
     {
         if (WalkDirection == WalkableDirection.left)
         {
+            Debug.Log("Повернулся направо");
             WalkDirection = WalkableDirection.right;
         }
         else if (WalkDirection == WalkableDirection.right)
         {
+            Debug.Log("Повернулся налево");
             WalkDirection = WalkableDirection.left;
         }
         else

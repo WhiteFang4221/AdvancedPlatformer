@@ -121,7 +121,175 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Health_0
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 192
+        width: 30
+        height: 47
+      alignment: 9
+      pivot: {x: 0.44799995, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0ef880c125735dd4c913d8f75bc81570
+      internalID: 1498076587
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_1
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 192
+        width: 30
+        height: 47
+      alignment: 9
+      pivot: {x: 0.44800007, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4e2f850a53de31440951bab88a4d2901
+      internalID: 1143413809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_2
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 128
+        width: 30
+        height: 47
+      alignment: 9
+      pivot: {x: 0.44733328, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5eac6d696ea8a504488261700b5b13ad
+      internalID: -1537583453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_3
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 128
+        width: 30
+        height: 47
+      alignment: 9
+      pivot: {x: 0.44733328, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a5da4ddbe10561e4d89e8e155722f139
+      internalID: -424814936
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_4
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 64
+        width: 31
+        height: 47
+      alignment: 9
+      pivot: {x: 0.43290317, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4999cd7b3e02e84bbd416cd2cb0c315
+      internalID: 1590993297
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_5
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 64
+        width: 33
+        height: 47
+      alignment: 9
+      pivot: {x: 0.40727234, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 80050fe3121b215458e59cb0fa3e5a20
+      internalID: 2139375455
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_6
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 0
+        width: 36
+        height: 46
+      alignment: 9
+      pivot: {x: 0.3733333, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b51237fa819dc748b2ac63da93f742d
+      internalID: 1393581680
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Health_7
+      rect:
+        serializedVersion: 2
+        x: 176
+        y: 0
+        width: 37
+        height: 46
+      alignment: 9
+      pivot: {x: 0.3632433, y: 0.00043493081}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1c212d685624541499511e81769dab07
+      internalID: 1453798842
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -132,7 +300,15 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Health_0: 1498076587
+      Health_1: 1143413809
+      Health_2: -1537583453
+      Health_3: -424814936
+      Health_4: 1590993297
+      Health_5: 2139375455
+      Health_6: 1393581680
+      Health_7: 1453798842
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
