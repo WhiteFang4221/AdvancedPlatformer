@@ -679,6 +679,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1029831970335402854, guid: 296f626df170f5945bcf39c5728f0bc1, type: 3}
+      propertyPath: m_Icon
+      value: 
+      objectReference: {fileID: 3306451490063965843, guid: 0000000000000000d000000000000000, type: 0}
+    - target: {fileID: 1029831970335402854, guid: 296f626df170f5945bcf39c5728f0bc1, type: 3}
       propertyPath: m_Name
       value: EnemyStayPoint
       objectReference: {fileID: 0}
@@ -726,7 +730,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 6477524068624382995, guid: 296f626df170f5945bcf39c5728f0bc1, type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 6477524068624382995, guid: 296f626df170f5945bcf39c5728f0bc1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
