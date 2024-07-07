@@ -18,7 +18,7 @@ public class DarkWizardMoving : MonoBehaviour
 
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
     private bool _isMoving = true;
-    private bool _isFaceRight = true;
+    [SerializeField] private bool _isFaceRight = true;
 
     public bool IsMoving
     {
@@ -98,9 +98,9 @@ public class DarkWizardMoving : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out EnemyStayPoint point))
+        if (collision.TryGetComponent(out EnemyStayPoint point) && _detectingPlayer.PointToPlayer.isActiveAndEnabled == false)
         {
-            TurnAround();
+            Debug.Log("Тригернулся");
             StartStayCoroutine();
         }
 

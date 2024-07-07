@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
     private LadderController _ladderChecker;
     private PlayerSurfacesChecker _groundChecker;
     private PlayerHealthManager _playerHealthManager;
+    private Coroutine _dashCoroutine;
 
     private float _rollCooldown = 1;
     private float _walkstopRate = 0.2f;
@@ -229,7 +230,7 @@ public class PlayerController : MonoBehaviour
     {
         if (context.performed && _groundChecker.IsGrounded && IsCanMove && _isCanRoll)
         {
-            StartCoroutine(Dash());
+            StartDashCoroutine();
         }
     }
 
@@ -260,6 +261,15 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(_rollCooldown);
 
         _isCanRoll = true;
+    }
+
+    private void StartDashCoroutine()
+    {
+        if (_dashCoroutine != null)
+        {
+            StopCoroutine(_dashCoroutine);
+        }
+        _dashCoroutine = StartCoroutine(Dash());
     }
 
     private void TurnAround()
