@@ -2,59 +2,29 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SurfacesChecker))]
-[RequireComponent(typeof(DetectingPlayer))]
+[RequireComponent(typeof(DetectingPlayer), typeof(EnemyHealthManager))]
 
 public class DarkWizardMoving : MonoBehaviour
 {
-    [SerializeField] private DetectingPlayer _detectionPlayer;
     [SerializeField] private float _moveSpeed = 9f;
 
-    public enum WalkableDirection
-    {
-        right, left
-    }
 
-    private Animator _animator;
+    private DetectingPlayer _detectingPlayer;
     private Rigidbody2D _rigidbody;
+    private Animator _animator;
     private EnemySurfacesChecker _surfacesChecker;
     private EnemyHealthManager _enemyHealthManager;
+    private Coroutine _stayCoroutine;
+
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
-    
     private bool _isMoving = true;
-    private Vector2 _walkDirectionVector = Vector2.right;
-    private WalkableDirection _walkDirection;
-    
-    public WalkableDirection WalkDirection
-    {
-        get
-        {
-            return _walkDirection;
-        }
-        private set
-        {
-            if (_walkDirection != value)
-            {
-                transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
-
-                if (value == WalkableDirection.left)
-                {
-                    _walkDirectionVector = Vector2.left;
-                }
-                else if (value == WalkableDirection.right)
-                {
-                    _walkDirectionVector = Vector2.right;
-                }
-            }
-
-            _walkDirection = value;
-        }
-    }
+    private bool _isFaceRight = true;
 
     public bool IsMoving
     {
         get
         {
-            if (_detectionPlayer.IsHasTarget == true || IsAlive == false)
+            if (_detectingPlayer.IsHasTarget == true || IsAlive == false)
             {
                 return false;
             }
@@ -70,21 +40,20 @@ public class DarkWizardMoving : MonoBehaviour
         }
     }
 
+    public bool IsAttacking
+    {
+        get
+        {
+            return _animator.GetBool(EnemyStringsAnimator.IsAttacking);
+        }
+    }
+
     public bool IsAlive
     {
         get
         {
-           return _animator.GetBool(EnemyStringsAnimator.IsAlive);
+            return _animator.GetBool(EnemyStringsAnimator.IsAlive);
         }
-    }
-
-    private void Awake()
-    {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
-        _surfacesChecker = GetComponent<EnemySurfacesChecker>();
-        _detectionPlayer = GetComponent<DetectingPlayer>();
-        _enemyHealthManager = GetComponent<EnemyHealthManager>();
     }
 
     private void OnEnable()
@@ -97,20 +66,33 @@ public class DarkWizardMoving : MonoBehaviour
         _enemyHealthManager.HitTaken -= OnHit;
     }
 
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+        _surfacesChecker = GetComponent<EnemySurfacesChecker>();
+        _enemyHealthManager = GetComponent<EnemyHealthManager>();
+        _detectingPlayer = GetComponent<DetectingPlayer>();
+    }
+
+    private void Update()
+    {
+        if (_detectingPlayer.PointToPlayer.isActiveAndEnabled == false)
+        {
+            Patrol();
+        }
+        else
+        {
+            LookAtTarget(_detectingPlayer.PointToPlayer.transform.position);
+            GoToPlayer();
+        }
+    }
+
     private void FixedUpdate()
     {
         if (_surfacesChecker.IsOnWall)
         {
-            StartCoroutine(Stay());
-        }
-
-        if (IsMoving && _detectionPlayer.IsAttacking == false)
-        {
-            _rigidbody.velocity = new Vector2(_moveSpeed * _walkDirectionVector.x, _rigidbody.velocity.y);
-        }
-        else
-        {
-            _rigidbody.velocity = Vector2.zero;
+            TurnAround();
         }
     }
 
@@ -118,33 +100,90 @@ public class DarkWizardMoving : MonoBehaviour
     {
         if (collision.TryGetComponent(out EnemyStayPoint point))
         {
-            StartCoroutine(Stay());
+            TurnAround();
+            StartStayCoroutine();
         }
+
+        if (collision.TryGetComponent(out PointToPlayer playerPoint) && _detectingPlayer.IsSeePlayer == false)
+        {
+            playerPoint.gameObject.SetActive(false);
+            StartStayCoroutine();
+        }
+    }
+
+    private void Patrol()
+    {
+        if (_surfacesChecker.IsOnWall)
+        {
+            StartStayCoroutine();
+        }
+
+        if (IsMoving && IsAttacking == false)
+        {
+            _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
+        }
+        else
+        {
+            _rigidbody.velocity = Vector2.zero;
+        }
+    }
+
+    private void GoToPlayer()
+    {
+        StopStayCoroutine();
+        IsMoving = true;
+
+        if (IsMoving && IsAttacking == false)
+        {
+            _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
+        }
+    }
+
+    private void LookAtTarget(Vector2 target)
+    {
+        if (IsAttacking == false)
+        {
+            if (transform.position.x > target.x && _isFaceRight == true)
+            {
+                TurnAround();
+                Debug.Log("Повернулся на врага влево");
+            }
+            else if (transform.position.x < target.x && _isFaceRight == false)
+            {
+                TurnAround();
+                Debug.Log("Повернулся на врага вправо");
+            }
+        }
+    }
+
+    private void TurnAround()
+    {
+        transform.localScale = new Vector2(transform.localScale.x * -1, transform.localScale.y);
+        _isFaceRight = !_isFaceRight;
     }
 
     private IEnumerator Stay()
     {
-        FlipDirection();
         IsMoving = false;
         yield return _stayTime;
         IsMoving = true;
     }
 
-    private void FlipDirection()
+    private void StartStayCoroutine()
     {
-        if (WalkDirection == WalkableDirection.left)
+        if (_stayCoroutine != null)
         {
-            Debug.Log("Повернулся направо");
-            WalkDirection = WalkableDirection.right;
+            StopCoroutine(_stayCoroutine);
         }
-        else if (WalkDirection == WalkableDirection.right)
+        _stayCoroutine = StartCoroutine(Stay());
+    }
+
+    private void StopStayCoroutine()
+    {
+        if (_stayCoroutine != null)
         {
-            Debug.Log("Повернулся налево");
-            WalkDirection = WalkableDirection.left;
-        }
-        else
-        {
-            Debug.LogError("не установлено значение влево или вправо");
+            StopCoroutine(_stayCoroutine);
+            _stayCoroutine = null;
         }
     }
 

@@ -3,12 +3,6 @@ public class AttackZone : MonoBehaviour
 {
     [SerializeField] private int _damage = 10;
     [SerializeField] private Vector2 _knockback = Vector2.zero;
-    private Collider2D _attackCollider;
-
-    private void Awake()
-    {
-        _attackCollider = GetComponent<Collider2D>();
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
