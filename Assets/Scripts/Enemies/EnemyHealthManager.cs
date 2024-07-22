@@ -22,6 +22,7 @@ public class EnemyHealthManager : HealthManager
         {
             currentHealth -= damage;
             HitTaken?.Invoke(damage, knockback);
+            HealthChanged?.Invoke(currentHealth, maxHealth);
             animator.SetTrigger(EnemyStringsAnimator.HitTrigger);
         }
 

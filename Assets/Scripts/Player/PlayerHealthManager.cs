@@ -1,14 +1,16 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator), typeof(PlayerController))]
 public class PlayerHealthManager : HealthManager
 {
-
     [SerializeField] private float _invinsibilityTime = 0.5f;
     [SerializeField] private int _potionHealQuantity = 0;
     [SerializeField] private int _maxPotionQuantity = 3;
     [SerializeField] private int _healEffectPoint = 30;
     [SerializeField] private float _healCooldown = 1f;
+
+    
 
     private float _healCooldownLeft;
     private float _timeHitLeft = 0;
@@ -65,6 +67,7 @@ public class PlayerHealthManager : HealthManager
         if (IsHealSuccsed && IsCanHeal)
         {
             Heal();
+            HealthChanged?.Invoke(currentHealth, maxHealth);
             IsCanHeal = false;
         }
 
@@ -101,6 +104,7 @@ public class PlayerHealthManager : HealthManager
             currentHealth-=damage;
             _isInvincible = true;
             HitTaken?.Invoke(damage, knockback);
+            HealthChanged?.Invoke(currentHealth, maxHealth);
             animator.SetTrigger(PlayerAnimator.HitTrigger);
         }
 
