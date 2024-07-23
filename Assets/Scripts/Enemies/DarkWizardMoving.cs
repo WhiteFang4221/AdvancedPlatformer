@@ -1,24 +1,23 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SurfacesChecker))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(EnemySurfacesChecker))]
 [RequireComponent(typeof(DetectingPlayer), typeof(EnemyHealthManager))]
 
 public class DarkWizardMoving : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 9f;
 
-
     private DetectingPlayer _detectingPlayer;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
+    private Coroutine _stayCoroutine;
+    private WaitForSeconds _stayTime = new WaitForSeconds(3);
     private EnemySurfacesChecker _surfacesChecker;
     private EnemyHealthManager _enemyHealthManager;
-    private Coroutine _stayCoroutine;
 
-    private WaitForSeconds _stayTime = new WaitForSeconds(3);
     private bool _isMoving = true;
-    [SerializeField] private bool _isFaceRight = true;
+    private bool _isFaceRight = true;
 
     public bool IsMoving
     {
@@ -40,21 +39,9 @@ public class DarkWizardMoving : MonoBehaviour
         }
     }
 
-    public bool IsAttacking
-    {
-        get
-        {
-            return _animator.GetBool(EnemyStringsAnimator.IsAttacking);
-        }
-    }
+    public bool IsAttacking => _animator.GetBool(EnemyStringsAnimator.IsAttacking);
 
-    public bool IsAlive
-    {
-        get
-        {
-            return _animator.GetBool(EnemyStringsAnimator.IsAlive);
-        }
-    }
+    public bool IsAlive => _animator.GetBool(EnemyStringsAnimator.IsAlive);
 
     private void OnEnable()
     {
@@ -77,7 +64,7 @@ public class DarkWizardMoving : MonoBehaviour
 
     private void Update()
     {
-        if (_detectingPlayer.PointToPlayer.isActiveAndEnabled == false)
+        if (!_detectingPlayer.PointToPlayer.isActiveAndEnabled)
         {
             Patrol();
         }
@@ -100,7 +87,6 @@ public class DarkWizardMoving : MonoBehaviour
     {
         if (collision.TryGetComponent(out EnemyStayPoint point) && _detectingPlayer.PointToPlayer.isActiveAndEnabled == false)
         {
-            Debug.Log("Тригернулся");
             StartStayCoroutine();
         }
 
@@ -118,7 +104,7 @@ public class DarkWizardMoving : MonoBehaviour
             StartStayCoroutine();
         }
 
-        if (IsMoving && IsAttacking == false)
+        if (IsMoving && !IsAttacking)
         {
             _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
         }
@@ -133,7 +119,7 @@ public class DarkWizardMoving : MonoBehaviour
         StopStayCoroutine();
         IsMoving = true;
 
-        if (IsMoving && IsAttacking == false)
+        if (IsMoving && !IsAttacking)
         {
             _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
         }
@@ -141,17 +127,15 @@ public class DarkWizardMoving : MonoBehaviour
 
     private void LookAtTarget(Vector2 target)
     {
-        if (IsAttacking == false)
+        if (!IsAttacking)
         {
-            if (transform.position.x > target.x && _isFaceRight == true)
+            if (transform.position.x > target.x && _isFaceRight)
             {
                 TurnAround();
-                Debug.Log("Повернулся на врага влево");
             }
-            else if (transform.position.x < target.x && _isFaceRight == false)
+            else if (transform.position.x < target.x && !_isFaceRight)
             {
                 TurnAround();
-                Debug.Log("Повернулся на врага вправо");
             }
         }
     }

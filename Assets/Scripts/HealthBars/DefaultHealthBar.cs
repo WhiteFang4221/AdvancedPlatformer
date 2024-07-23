@@ -15,7 +15,7 @@ public class DefaultHealthBar : HealthBar
 
     protected override void ShowNewValue(float currentHealth, float maxHealth)
     {
-        float percentHealth = (currentHealth/ maxHealth) * maxPercentHealth;
+        float percentHealth = (currentHealth/ maxHealth) * MaxPercentHealth;
         _slider.value = percentHealth;
 
         if (_slider.value <= 0)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -54,14 +53,7 @@ public class PlayerController : MonoBehaviour
     private bool _isMovingX;
 
     #region Свойства
-    public Vector2 MoveInput
-    {
-        get
-        {
-            return _moveInput;
-        }
-    }
-
+    public Vector2 MoveInput => _moveInput;
     public bool IsMovingX
     {
         get
@@ -74,7 +66,6 @@ public class PlayerController : MonoBehaviour
             _animator.SetBool(PlayerAnimator.IsMovingX, value);
         }
     }
-
     public bool IsCanMove
     {
         get
@@ -89,15 +80,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-    public bool IsRolling
-    {
-        get
-        {
-            return _animator.GetBool(PlayerAnimator.IsRolling);
-        }
-    }
-
     public float CurrentSpeed
     {
         get
@@ -134,22 +116,9 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-    public bool IsAlive
-    {
-        get
-        {
-            return _animator.GetBool(PlayerAnimator.IsAlive);
-        }
-    }
-
-    public bool IsAttacking
-    {
-        get
-        {
-            return _animator.GetBool(PlayerAnimator.IsAttacking);
-        }
-    }
+    public bool IsRolling => _animator.GetBool(PlayerAnimator.IsRolling);
+    public bool IsAlive => _animator.GetBool(PlayerAnimator.IsAlive);
+    public bool IsAttacking => _animator.GetBool(PlayerAnimator.IsAttacking);
     #endregion
 
     private void Awake()
@@ -173,7 +142,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (IsCanMove && IsRolling == false && _ladderChecker.IsOnLadder == false)
+        if (IsCanMove && !IsRolling && !_ladderChecker.IsOnLadder)
         {
             TurnAround();
             _rigidbody.velocity = new Vector2(_moveInput.x * CurrentSpeed, _rigidbody.velocity.y);
@@ -185,11 +154,11 @@ public class PlayerController : MonoBehaviour
             _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
         }
 
-        else if (IsAttacking || _animator.GetBool(PlayerAnimator.IsHealing) == true)
+        else if (IsAttacking || _animator.GetBool(PlayerAnimator.IsHealing))
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);
         }
-        else if (IsAlive == false)
+        else if (!IsAlive)
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _moveStopRate), _rigidbody.velocity.y);
         }
@@ -220,7 +189,7 @@ public class PlayerController : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext context)
     {
-        if (context.started && _groundChecker.IsGrounded && _ladderChecker.IsOnLadder == false && IsRolling == false)
+        if (context.started && _groundChecker.IsGrounded && !_ladderChecker.IsOnLadder && !IsRolling)
         {
             _animator.SetTrigger(PlayerAnimator.AttackTrigger);
         }
@@ -274,7 +243,7 @@ public class PlayerController : MonoBehaviour
 
     private void TurnAround()
     {
-        if ((_moveInput.x > 0 && _isFaceRight == false || (_moveInput.x < 0 && _isFaceRight == true)))
+        if ((_moveInput.x > 0 && !_isFaceRight) || (_moveInput.x < 0 && _isFaceRight))
         {
             transform.localScale *= new Vector2(-1, 1);
             _isFaceRight = !_isFaceRight;

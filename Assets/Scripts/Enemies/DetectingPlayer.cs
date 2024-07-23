@@ -15,18 +15,8 @@ public class DetectingPlayer : MonoBehaviour
     private Animator _animator;
     private bool _isSeePlayer = false;
 
-    public PointToPlayer PointToPlayer
-    {
-        get { return _pointToPlayer; }
-    }
-    public bool IsSeePlayer
-    {
-        get
-        {
-            return _isSeePlayer;
-        }
-    }
-
+    public PointToPlayer PointToPlayer => _pointToPlayer;
+    public bool IsSeePlayer => _isSeePlayer;
     public bool IsHasTarget
     {
         get
@@ -39,14 +29,7 @@ public class DetectingPlayer : MonoBehaviour
             _animator.SetBool(EnemyStringsAnimator.IsHasTarget, value);
         }
     }
-
-    public bool IsAlive
-    {
-        get
-        {
-            return _animator.GetBool(EnemyStringsAnimator.IsAlive);
-        }
-    }
+    public bool IsAlive => _animator.GetBool(EnemyStringsAnimator.IsAlive);
 
     private void Awake()
     {
@@ -78,12 +61,10 @@ public class DetectingPlayer : MonoBehaviour
             _pointToPlayer.transform.position = new Vector2(obstacleHit.transform.position.x, transform.position.y);
             _pointToPlayer.gameObject.SetActive(true);
             _isSeePlayer = true;
-            Debug.DrawRay(_obstacleRayObject.transform.position, Vector2.right * obstacleHit.distance * transform.localScale, Color.red);
         }
         else
         {
             _isSeePlayer = false;
-            Debug.DrawRay(_obstacleRayObject.transform.position, Vector2.right * _obstacleRayDistance * transform.localScale, Color.green);
         }
     }
 
@@ -95,11 +76,6 @@ public class DetectingPlayer : MonoBehaviour
         {
             _pointToPlayer.transform.position = new Vector2(obstacleHit.transform.position.x, transform.position.y);
             _pointToPlayer.gameObject.SetActive(true);
-            Debug.DrawRay(_obstacleRayObject.transform.position, Vector2.left * obstacleHit.distance * transform.localScale, Color.red);
-        }
-        else
-        {
-            Debug.DrawRay(_obstacleRayObject.transform.position, Vector2.left * _obstacleRayDistanceBehind * transform.localScale, Color.green);
         }
     }
 }

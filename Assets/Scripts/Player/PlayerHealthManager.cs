@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator), typeof(PlayerController))]
@@ -10,24 +9,22 @@ public class PlayerHealthManager : HealthManager
     [SerializeField] private int _healEffectPoint = 30;
     [SerializeField] private float _healCooldown = 1f;
 
-    
-
     private float _healCooldownLeft;
     private float _timeHitLeft = 0;
 
     private bool IsCanHeal = true;
     private bool _isInvincible;
 
-    public bool IsAlive
+    public new bool IsAlive
     {
         get
         {
-            return isAlive;
+            return base.IsAlive;
         }
         private set
         {
-            isAlive = value;
-            animator.SetBool(PlayerAnimator.IsAlive, value);
+            base.IsAlive = value;
+            Animator.SetBool(PlayerAnimator.IsAlive, value);
         }
     }
 
@@ -47,7 +44,7 @@ public class PlayerHealthManager : HealthManager
     {
         get
         {
-            return animator.GetBool(PlayerAnimator.IsHealSucceeded);
+            return Animator.GetBool(PlayerAnimator.IsHealSucceeded);
         }
     }
 
@@ -67,7 +64,7 @@ public class PlayerHealthManager : HealthManager
         if (IsHealSuccsed && IsCanHeal)
         {
             Heal();
-            HealthChanged?.Invoke(currentHealth, maxHealth);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
             IsCanHeal = false;
         }
 
@@ -99,16 +96,16 @@ public class PlayerHealthManager : HealthManager
 
     public override void TakeDamage(int damage, Vector2 knockback)
     {
-        if (IsAlive && _isInvincible == false)
+        if (IsAlive && !_isInvincible)
         {
-            currentHealth-=damage;
+            CurrentHealth-=damage;
             _isInvincible = true;
             HitTaken?.Invoke(damage, knockback);
-            HealthChanged?.Invoke(currentHealth, maxHealth);
-            animator.SetTrigger(PlayerAnimator.HitTrigger);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            Animator.SetTrigger(PlayerAnimator.HitTrigger);
         }
 
-        if ( currentHealth <= 0)
+        if ( CurrentHealth <= 0)
         {
             IsAlive = false;
         }
@@ -118,13 +115,13 @@ public class PlayerHealthManager : HealthManager
     {
         _potionHealQuantity--;
 
-        if (currentHealth + _healEffectPoint >= maxHealth)
+        if (CurrentHealth + _healEffectPoint >= MaxHealth)
         {
-            currentHealth = maxHealth;
+            CurrentHealth = MaxHealth;
         }
         else
         {
-            currentHealth += _healEffectPoint;
+            CurrentHealth += _healEffectPoint;
         }
     }
 }

@@ -5,23 +5,13 @@ public class EnemySurfacesChecker : SurfacesChecker
     [SerializeField] private bool _isOnWall;
     [SerializeField] private float _wallCheckDistance = 2f;
 
-    private Vector2 _wallCheckDirection => transform.localScale.x > 0 ? Vector2.right : Vector2.left;
     private RaycastHit2D[] _wallHits = new RaycastHit2D[5];
+    private Vector2 WallCheckDirection => transform.localScale.x > 0 ? Vector2.right : Vector2.left;
 
-    public bool IsOnWall
-    {
-        get
-        {
-            return _isOnWall;
-        }
-        private set
-        {
-            _isOnWall = value;
-        }
-    }
+    public bool IsOnWall => _isOnWall;
 
     private void FixedUpdate()
     {
-        IsOnWall = capsuleCollider.Cast(_wallCheckDirection, castFilter, _wallHits, _wallCheckDistance) > 0;
+        _isOnWall = ÑapsuleCollider.Cast(WallCheckDirection, ÑastFilter, _wallHits, _wallCheckDistance) > 0;
     }
 }

@@ -9,7 +9,7 @@ public class CoinCollector : MonoBehaviour
         if (collision.TryGetComponent<Coin>(out Coin coin))
         {
             PlayPickingSound();
-            Destroy(collision.gameObject);
+            Destroy(coin.gameObject);
         }
     }
 

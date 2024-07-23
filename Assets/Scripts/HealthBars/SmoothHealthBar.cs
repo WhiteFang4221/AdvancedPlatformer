@@ -9,10 +9,10 @@ public class SmoothHealthBar : HealthBar
 {
     [SerializeField] private Slider _slider;
 
-    public event Action<float, float> HealthSliderChanged;
-
     private Coroutine _healthBarChangerRoutine;
     private float _healthSpeedChange = 30f;
+
+    public event Action<float, float> HealthSliderChanged;
 
     private void Awake()
     {
@@ -32,11 +32,11 @@ public class SmoothHealthBar : HealthBar
 
     private IEnumerator ChangeHealthBarState(float currentHealth, float maxHealth)
     {
-        float _percentHealth = (currentHealth / maxHealth) * maxPercentHealth;
+        float percentHealth = (currentHealth / maxHealth) * MaxPercentHealth;
 
-        while (_slider.value != _percentHealth)
+        while (_slider.value != percentHealth)
         {
-            _slider.value = Mathf.MoveTowards(_slider.value, _percentHealth, Time.deltaTime * _healthSpeedChange);
+            _slider.value = Mathf.MoveTowards(_slider.value, percentHealth, Time.deltaTime * _healthSpeedChange);
             yield return null;
         }
     }

@@ -1630,6 +1630,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4819644323682097867, guid: df0d96f4fb1e9c74db35d96e7f4d5fac, type: 3}
+      propertyPath: HealthManager
+      value: 
+      objectReference: {fileID: 760858901}
+    - target: {fileID: 4819644323682097867, guid: df0d96f4fb1e9c74db35d96e7f4d5fac, type: 3}
       propertyPath: healthManager
       value: 
       objectReference: {fileID: 760858901}
@@ -28613,7 +28617,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 1e8887f697e96d241a9f0f14da57f152, type: 3}
-  m_PlayOnAwake: 0
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -28688,7 +28692,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -64497,6 +64501,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 653769683}
     m_Modifications:
     - target: {fileID: -2221545306433262717, guid: 44123d0317eccd64eb6647ecbba54861, type: 3}
+      propertyPath: HealthManager
+      value: 
+      objectReference: {fileID: 1753056019}
+    - target: {fileID: -2221545306433262717, guid: 44123d0317eccd64eb6647ecbba54861, type: 3}
       propertyPath: healthManager
       value: 
       objectReference: {fileID: 1753056019}
@@ -65017,6 +65025,14 @@ PrefabInstance:
     - target: {fileID: 5763699633491135996, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
       propertyPath: m_LocalPosition.y
       value: 5.89
+      objectReference: {fileID: 0}
+    - target: {fileID: 7124858693402138027, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
+      propertyPath: "\u0421astFilter.useLayerMask"
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7124858693402138027, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
+      propertyPath: "\u0421astFilter.layerMask.m_Bits"
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 7542908229675748597, guid: 89960796dcfa4454c9b15a827ca9a09a, type: 3}
       propertyPath: m_Name
@@ -75701,8 +75717,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60f3e22cfc82ddd4d9a10293df9f8bbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 0
+  MaxHealth: 100
+  CurrentHealth: 0
   _invinsibilityTime: 0.5
   _potionHealQuantity: 3
   _maxPotionQuantity: 3
@@ -81643,6 +81659,14 @@ PrefabInstance:
     - target: {fileID: 3712612767387983833, guid: 650ab2549afa025468499197bf969f39, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5633128176207268505, guid: 650ab2549afa025468499197bf969f39, type: 3}
+      propertyPath: "\u0421astFilter.useLayerMask"
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5633128176207268505, guid: 650ab2549afa025468499197bf969f39, type: 3}
+      propertyPath: "\u0421astFilter.layerMask.m_Bits"
+      value: 640
       objectReference: {fileID: 0}
     - target: {fileID: 8872868068777918634, guid: 650ab2549afa025468499197bf969f39, type: 3}
       propertyPath: _audioSource

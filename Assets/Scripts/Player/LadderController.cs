@@ -18,21 +18,9 @@ public class LadderController : MonoBehaviour
     private bool _isLadderPositionCorrected = true;
     private float _ladderCenter;
 
-    public bool IsOnLadder
-    {
-        get
-        {
-            return _animator.GetBool(PlayerAnimator.IsOnLadder);
-        }
-    }
+    public bool IsOnLadder => _animator.GetBool(PlayerAnimator.IsOnLadder);
 
-    public Vector2 MoveInput
-    {
-        get
-        {
-            return _playerController.MoveInput;
-        }
-    }
+    public Vector2 MoveInput => _playerController.MoveInput;
 
     private void Awake()
     {
@@ -60,7 +48,7 @@ public class LadderController : MonoBehaviour
         {
             if (_isLadderCheck || _isBottomLadderCheck)
             {
-                if (_isLadderCheck == false && _isBottomLadderCheck == true) // Сверху
+                if (!_isLadderCheck && _isBottomLadderCheck) // Сверху
                 {
                     if (MoveInput.y > 0)
                     {
@@ -71,7 +59,7 @@ public class LadderController : MonoBehaviour
                         _animator.SetBool(PlayerAnimator.IsOnLadder, true);
                     }
                 }
-                else if (_isLadderCheck == true && _isBottomLadderCheck == true) // на лестнице
+                else if (_isLadderCheck && _isBottomLadderCheck) // на лестнице
                 {
                     if (MoveInput.y > 0)
                     {
@@ -82,7 +70,7 @@ public class LadderController : MonoBehaviour
                         _animator.SetBool(PlayerAnimator.IsOnLadder, true);
                     }
                 }
-                else if (_isLadderCheck == true && _isBottomLadderCheck == false) // внизу
+                else if (_isLadderCheck && !_isBottomLadderCheck) // внизу
                 {
                     if (MoveInput.y > 0)
                     {
@@ -119,7 +107,7 @@ public class LadderController : MonoBehaviour
 
     private void FindPositionOnLadder()
     {
-        if (IsOnLadder && _isLadderPositionCorrected == true)
+        if (IsOnLadder && _isLadderPositionCorrected)
         {
             _isLadderPositionCorrected = false;
             _rigidbody.velocity = Vector2.zero;

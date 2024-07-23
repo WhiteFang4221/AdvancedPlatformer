@@ -1,4 +1,5 @@
 using UnityEngine;
+
 public class AttackZone : MonoBehaviour
 {
     [SerializeField] private int _damage = 10;
@@ -12,7 +13,6 @@ public class AttackZone : MonoBehaviour
         {
             Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? _knockback : new Vector2(-_knockback.x, _knockback.y);
             healthManager.TakeDamage(_damage, deliveredKnockback);
-            Debug.Log(collision.name + "Получил Урон " +  _damage);
         }
     }
 }

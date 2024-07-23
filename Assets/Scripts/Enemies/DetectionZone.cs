@@ -5,13 +5,7 @@ public class DetectionZone : MonoBehaviour
 {
     [SerializeField] private List<Collider2D> _detectedColliders = new List<Collider2D>();
 
-    public List<Collider2D> DetectedColliders
-    {
-        get
-        {
-            return _detectedColliders;
-        }
-    }
+    public IReadOnlyList<Collider2D> DetectedColliders => _detectedColliders;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

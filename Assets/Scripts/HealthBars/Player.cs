@@ -8,35 +8,23 @@ public class Player : MonoBehaviour
     public event Action<float> HealthChanged;
     public event Action<float> HealthMaxSet;
 
-    private float _currentHealth;
-
-    public float CurrentHealth
-    {
-        get
-        {
-            return _currentHealth;
-        }
-        private set
-        {
-            _currentHealth = value;
-        }
-    }
+    public float CurrentHealth { get; private set; }
 
     private void Awake()
     {
-        _currentHealth = _maxHealth;
-        HealthMaxSet?.Invoke(_currentHealth);
+        CurrentHealth = _maxHealth;
+        HealthMaxSet?.Invoke(CurrentHealth);
     }
 
     public void TakeDamage(float damagePoint)
     {
-        _currentHealth = Mathf.Clamp(_currentHealth - damagePoint, 0f, _maxHealth);
-        HealthChanged?.Invoke(_currentHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth - damagePoint, 0f, _maxHealth);
+        HealthChanged?.Invoke(CurrentHealth);
     }
 
     public void Heal(float healPoint)
     {
-        _currentHealth = Mathf.Clamp(_currentHealth + healPoint, 0f, _maxHealth);
-        HealthChanged?.Invoke(_currentHealth);
+        CurrentHealth = Mathf.Clamp(CurrentHealth + healPoint, 0f, _maxHealth);
+        HealthChanged?.Invoke(CurrentHealth);
     }
 }

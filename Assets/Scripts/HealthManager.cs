@@ -5,19 +5,19 @@ using UnityEngine;
 
 abstract public class HealthManager : MonoBehaviour
 {
-    [SerializeField] protected float maxHealth = 100;
-    [SerializeField] protected float currentHealth;
+    [SerializeField] protected float MaxHealth = 100;
+    [SerializeField] protected float CurrentHealth;
+
+    protected Animator Animator;
+    protected bool IsAlive = true;
 
     public Action<int, Vector2> HitTaken;
     public Action<float, float> HealthChanged;
 
-    protected Animator animator;
-    protected bool isAlive = true;
-
     private void Start()
     {
-        animator = GetComponent<Animator>();
-        currentHealth = maxHealth;
+        Animator = GetComponent<Animator>();
+        CurrentHealth = MaxHealth;
     }
 
     public abstract void TakeDamage(int damage, Vector2 knockback);

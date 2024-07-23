@@ -6,13 +6,13 @@ public class EnemyHealthManager : HealthManager
     {
         get
         {
-            return isAlive;
+            return base.IsAlive;
         }
 
         private set
         {
-            isAlive = value;
-            animator.SetBool(EnemyStringsAnimator.IsAlive, value);
+            base.IsAlive = value;
+            Animator.SetBool(EnemyStringsAnimator.IsAlive, value);
         }
     }
 
@@ -20,13 +20,13 @@ public class EnemyHealthManager : HealthManager
     {
         if (IsAlive )
         {
-            currentHealth -= damage;
+            CurrentHealth -= damage;
             HitTaken?.Invoke(damage, knockback);
-            HealthChanged?.Invoke(currentHealth, maxHealth);
-            animator.SetTrigger(EnemyStringsAnimator.HitTrigger);
+            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            Animator.SetTrigger(EnemyStringsAnimator.HitTrigger);
         }
 
-        if (currentHealth <= 0)
+        if (CurrentHealth <= 0)
         {
             IsAlive = false;
         }

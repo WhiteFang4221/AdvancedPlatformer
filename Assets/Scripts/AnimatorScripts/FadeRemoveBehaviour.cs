@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 public class FadeRemoveBehaviour : StateMachineBehaviour
@@ -9,14 +8,14 @@ public class FadeRemoveBehaviour : StateMachineBehaviour
     private SpriteRenderer _spriteRenderer;
     private Color _startColor;
 
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _timeElapsed = 0f;
         _spriteRenderer = animator.GetComponent<SpriteRenderer>();
         _startColor = _spriteRenderer.color;
     }
 
-    override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         _timeElapsed += Time.deltaTime;
 

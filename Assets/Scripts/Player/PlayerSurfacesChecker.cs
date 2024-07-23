@@ -1,12 +1,13 @@
 using UnityEngine;
 
 [RequireComponent (typeof(CollisionDetector))]
+
 public class PlayerSurfacesChecker : SurfacesChecker
 {
-    private CollisionDetector _collisionDetector;
-    private RaycastHit2D[] _groundHits = new RaycastHit2D[5];
     [SerializeField] private float _groundDistance = 0.05f;
-    [SerializeField] private bool _isGrounded;
+    private RaycastHit2D[] _groundHits = new RaycastHit2D[5];
+    private CollisionDetector _collisionDetector;
+    private bool _isGrounded;
 
     public bool IsGrounded
     {
@@ -17,7 +18,7 @@ public class PlayerSurfacesChecker : SurfacesChecker
         protected set
         {
             _isGrounded = value;
-            animator.SetBool(PlayerAnimator.IsGrounded, _isGrounded);
+            Animator.SetBool(PlayerAnimator.IsGrounded, _isGrounded);
         }
     }
 
@@ -28,13 +29,13 @@ public class PlayerSurfacesChecker : SurfacesChecker
 
     private void FixedUpdate()
     {
-        if (_collisionDetector.IsIgnorePlatformCollider == true)
+        if (_collisionDetector.IsIgnorePlatformCollider)
         {
             IsGrounded = false;
         }
         else
         {
-            IsGrounded = capsuleCollider.Cast(Vector2.down, castFilter, _groundHits, _groundDistance) > 0;
+            IsGrounded = ÑapsuleCollider.Cast(Vector2.down, ÑastFilter, _groundHits, _groundDistance) > 0;
         }
     }
 }

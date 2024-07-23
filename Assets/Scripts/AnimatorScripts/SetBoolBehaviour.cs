@@ -8,7 +8,7 @@ public class SetBoolBehaviour : StateMachineBehaviour
     [SerializeField] private bool _valueOnEnter;
     [SerializeField] private bool _valueOnExit;
 
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (_updateOnState)
         {
@@ -16,7 +16,7 @@ public class SetBoolBehaviour : StateMachineBehaviour
         }
     }
 
-    override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         if (_updateOnState)
         {
@@ -24,7 +24,7 @@ public class SetBoolBehaviour : StateMachineBehaviour
         }
     }
 
-    override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash)
+    public override void OnStateMachineEnter(Animator animator, int stateMachinePathHash)
     {
         if (_updateOnStateMachine)
         {
@@ -32,7 +32,7 @@ public class SetBoolBehaviour : StateMachineBehaviour
         }
     }
 
-    override public void OnStateMachineExit(Animator animator, int stateMachinePathHash)
+    public override void OnStateMachineExit(Animator animator, int stateMachinePathHash)
     {
         if (_updateOnStateMachine)
         {

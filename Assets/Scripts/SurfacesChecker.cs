@@ -4,14 +4,14 @@ using UnityEngine;
 
 abstract public class SurfacesChecker : MonoBehaviour
 {
-    [SerializeField] protected ContactFilter2D castFilter;
+    [SerializeField] protected ContactFilter2D ÑastFilter;
 
-    protected CapsuleCollider2D capsuleCollider;
-    protected Animator animator;
+    protected CapsuleCollider2D ÑapsuleCollider;
+    protected Animator Animator;
      
     private void Start()
     {
-        capsuleCollider = GetComponent<CapsuleCollider2D>();
-        animator = GetComponent<Animator>();
+        ÑapsuleCollider = GetComponent<CapsuleCollider2D>();
+        Animator = GetComponent<Animator>();
     }
 }
