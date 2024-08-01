@@ -6,4 +6,5 @@ public static class EnemyStringsAnimator
     public const string IsAttacking = "IsAttacking";
     public const string HitTrigger = "HitTrigger";
     public const string IsAlive = "IsAlive";
+    public const string IsTrapped = "IsTrapped";
 }

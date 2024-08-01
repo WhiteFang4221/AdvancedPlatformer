@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -27,6 +28,8 @@ public static class PlayerAnimator
     public const string IsAttacking = "IsAttacking";
     public const string IsHealing = "IsHealing";
     public const string IsHealSucceeded = "IsHealSucceeded";
+    public const string IsVampirismUse = "IsVampirismUse";
+    public const string IsVampirismFinish = "IsVampirismFinish";
 }
 
 public class PlayerController : MonoBehaviour
@@ -37,6 +40,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _jumpForce = 10f;
     [SerializeField] private float _rollPower = 20f;
     [SerializeField] private Vector2 _moveInput;
+    [SerializeField] private VampireAbility _vimpireAbility;
+
+    public Action VimpireAbilityUsed;
+    public Action VimpireAbilityCanceled;
 
     private Rigidbody2D _rigidbody;
     private Animator _animator;
@@ -154,7 +161,7 @@ public class PlayerController : MonoBehaviour
             _animator.SetFloat(PlayerAnimator.yVelocity, _rigidbody.velocity.y);
         }
 
-        else if (IsAttacking || _animator.GetBool(PlayerAnimator.IsHealing))
+        else if (IsAttacking || _animator.GetBool(PlayerAnimator.IsHealing) || _animator.GetBool(PlayerAnimator.IsVampirismUse))
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);
         }
@@ -189,7 +196,7 @@ public class PlayerController : MonoBehaviour
 
     public void Attack(InputAction.CallbackContext context)
     {
-        if (context.started && _groundChecker.IsGrounded && !_ladderChecker.IsOnLadder && !IsRolling)
+        if (context.started && _groundChecker.IsGrounded && !_ladderChecker.IsOnLadder && !IsRolling && !_animator.GetBool(PlayerAnimator.IsVampirismUse))
         {
             _animator.SetTrigger(PlayerAnimator.AttackTrigger);
         }
@@ -208,6 +215,23 @@ public class PlayerController : MonoBehaviour
         if (context.started && IsCanMove && _groundChecker.IsGrounded && _playerHealthManager.PotionHealQuantity > 0)
         {
             _animator.SetBool(PlayerAnimator.IsHealing, true);
+        }
+    }
+
+    public void UseVimpireAbility(InputAction.CallbackContext context)
+    {
+        if (context.started && _vimpireAbility.IsCanUseAbility && IsCanMove && _groundChecker.IsGrounded)
+        {
+            _animator.SetBool(PlayerAnimator.IsVampirismUse, true);
+            VimpireAbilityUsed?.Invoke();
+        }
+    }
+
+    public void CancelAbility(InputAction.CallbackContext context)
+    {
+        if (context.started && _animator.GetBool(PlayerAnimator.IsVampirismUse))
+        {
+            VimpireAbilityCanceled?.Invoke();
         }
     }
     #endregion
@@ -250,8 +274,13 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnHit(int damage, Vector2 knockback)
+    private void OnHit(Vector2 knockback)
     {
+        if (_animator.GetBool(PlayerAnimator.IsVampirismUse))
+        {
+            VimpireAbilityCanceled?.Invoke();
+        }
+
         _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
     }
 }

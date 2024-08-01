@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyHealthManager : HealthManager
@@ -18,15 +19,20 @@ public class EnemyHealthManager : HealthManager
 
     public override void TakeDamage(int damage, Vector2 knockback)
     {
-        if (IsAlive )
+        if (IsAlive)
         {
-            CurrentHealth -= damage;
-            HitTaken?.Invoke(damage, knockback);
-            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            LosingHealth(damage);
+            HitTaken?.Invoke(knockback);
             Animator.SetTrigger(EnemyStringsAnimator.HitTrigger);
         }
+    }
 
-        if (CurrentHealth <= 0)
+    public void LosingHealth(int damage)
+    {
+        currentHealth -= damage;
+        HealthChanged?.Invoke(currentHealth, MaxHealth);
+
+        if (currentHealth <= 0)
         {
             IsAlive = false;
         }

@@ -1,19 +1,24 @@
+using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(PlayerController))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerHealthManager : HealthManager
 {
-    [SerializeField] private float _invinsibilityTime = 0.5f;
+    [SerializeField] private VampirismDetectionZone _vampirismDetectionZone;
+    [SerializeField] private VampireAbility _vampirismAbility;
     [SerializeField] private int _potionHealQuantity = 0;
     [SerializeField] private int _maxPotionQuantity = 3;
-    [SerializeField] private int _healEffectPoint = 30;
+    [SerializeField] private int _potionHealEffect = 30;
+    [SerializeField] private float _invinsibilityTime = 0.5f;
     [SerializeField] private float _healCooldown = 1f;
+
+    public Action AbilityCancelled;
 
     private float _healCooldownLeft;
     private float _timeHitLeft = 0;
 
     private bool IsCanHeal = true;
-    private bool _isInvincible;
+    private bool _isInvincible = false;
 
     public new bool IsAlive
     {
@@ -48,6 +53,11 @@ public class PlayerHealthManager : HealthManager
         }
     }
 
+    private void OnEnable()
+    {
+        _vampirismAbility.HealthStolen += EraseHealth;
+    }
+
     private void Update()
     {
         if (_isInvincible)
@@ -63,12 +73,12 @@ public class PlayerHealthManager : HealthManager
 
         if (IsHealSuccsed && IsCanHeal)
         {
-            Heal();
-            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            PotionHeal();
+            HealthChanged?.Invoke(currentHealth, MaxHealth);
             IsCanHeal = false;
         }
 
-        if(IsCanHeal == false)
+        if (IsCanHeal == false)
         {
             if (_healCooldownLeft >= _healCooldown)
             {
@@ -98,30 +108,36 @@ public class PlayerHealthManager : HealthManager
     {
         if (IsAlive && !_isInvincible)
         {
-            CurrentHealth-=damage;
+            currentHealth -= damage;
             _isInvincible = true;
-            HitTaken?.Invoke(damage, knockback);
-            HealthChanged?.Invoke(CurrentHealth, MaxHealth);
+            HitTaken?.Invoke(knockback);
+            HealthChanged?.Invoke(currentHealth, MaxHealth);
             Animator.SetTrigger(PlayerAnimator.HitTrigger);
         }
 
-        if ( CurrentHealth <= 0)
+        if (currentHealth <= 0)
         {
             IsAlive = false;
         }
     }
 
-    private void Heal()
+    private void PotionHeal()
     {
         _potionHealQuantity--;
+        EraseHealth(_potionHealEffect);
+    }
 
-        if (CurrentHealth + _healEffectPoint >= MaxHealth)
+    private void EraseHealth(int healEffectPoint)
+    {
+        if (currentHealth + healEffectPoint >= MaxHealth)
         {
-            CurrentHealth = MaxHealth;
+            currentHealth = MaxHealth;
         }
         else
         {
-            CurrentHealth += _healEffectPoint;
+            currentHealth += healEffectPoint;
         }
+
+        HealthChanged?.Invoke(currentHealth, MaxHealth);
     }
 }

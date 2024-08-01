@@ -17,6 +17,7 @@ public class DarkWizardMoving : MonoBehaviour
     private EnemyHealthManager _enemyHealthManager;
 
     private bool _isMoving = true;
+    private bool _isTrapped = false;
     private bool _isFaceRight = true;
 
     public bool IsMoving
@@ -42,6 +43,19 @@ public class DarkWizardMoving : MonoBehaviour
     public bool IsAttacking => _animator.GetBool(EnemyStringsAnimator.IsAttacking);
 
     public bool IsAlive => _animator.GetBool(EnemyStringsAnimator.IsAlive);
+
+    public bool IsTrapped
+    {
+        get
+        {
+            return _isTrapped;
+        }
+        private set
+        {
+            _isTrapped = value;
+            _animator.SetBool(EnemyStringsAnimator.IsTrapped, value);
+        }
+    }
 
     private void OnEnable()
     {
@@ -94,6 +108,20 @@ public class DarkWizardMoving : MonoBehaviour
         {
             playerPoint.gameObject.SetActive(false);
             StartStayCoroutine();
+        }
+
+
+        if (collision.TryGetComponent(out VampireAbility ability))
+        {
+            IsTrapped = true;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.TryGetComponent(out VampireAbility ability))
+        {
+            IsTrapped = false;
         }
     }
 
@@ -171,7 +199,7 @@ public class DarkWizardMoving : MonoBehaviour
         }
     }
 
-    private void OnHit(int damage, Vector2 knockback)
+    private void OnHit(Vector2 knockback)
     {
         _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
     }
