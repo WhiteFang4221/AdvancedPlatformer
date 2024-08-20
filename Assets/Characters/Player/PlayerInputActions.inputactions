@@ -15,15 +15,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Attack",
-                    "type": "Button",
-                    "id": "1d73fb25-2cb5-40b6-af99-2a093e0a9b9c",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "cec66968-0fc6-48f7-ae49-ee8f567bd10b",
@@ -36,6 +27,15 @@
                     "name": "RollOver",
                     "type": "Button",
                     "id": "945600ae-f154-4306-bba6-131a4e6b69d3",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "1d73fb25-2cb5-40b6-af99-2a093e0a9b9c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -182,28 +182,6 @@
                 },
                 {
                     "name": "",
-                    "id": "d0d6bcf1-c50c-4769-80c2-c9127b0af455",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "34cb1471-7452-471f-be7d-ac297838efac",
-                    "path": "<Keyboard>/leftShift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "RollOver",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "8795ebcc-706f-4278-b507-16ba31451633",
                     "path": "<Keyboard>/q",
                     "interactions": "",
@@ -232,6 +210,28 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "CancelAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d0d6bcf1-c50c-4769-80c2-c9127b0af455",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "34cb1471-7452-471f-be7d-ac297838efac",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "RollOver",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

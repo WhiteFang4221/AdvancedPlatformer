@@ -7,12 +7,16 @@ public class AttackZone : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        HealthManager healthManager = collision.GetComponent<HealthManager>();
+        if (collision.TryGetComponent(out Health target))
+        {
+            
+            target.LosingHealth(_damage);
+        }
 
-        if (healthManager != null)
+        if (collision.TryGetComponent(out IPushable pushableObject))
         {
             Vector2 deliveredKnockback = transform.parent.localScale.x > 0 ? _knockback : new Vector2(-_knockback.x, _knockback.y);
-            healthManager.TakeDamage(_damage, deliveredKnockback);
+            pushableObject.PushOffOnHit(deliveredKnockback);
         }
     }
-}
+} 

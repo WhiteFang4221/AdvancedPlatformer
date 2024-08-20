@@ -6,8 +6,8 @@ using UnityEngine;
 [RequireComponent (typeof(VampirismDetectionZone))]
 public class VampireAbility : MonoBehaviour
 {
-    [SerializeField] private PlayerController _playerController;
-    [SerializeField] private PlayerHealthManager _playerHealthManager;
+    [SerializeField] private PlayerMoving _playerController;
+    [SerializeField] private PlayerHealPotion _playerHealthManager;
     [SerializeField] private Animator _animator;
     [SerializeField] private float _timeAbility = 6f;
     [SerializeField] private int _abilityDamage = 5;
@@ -36,7 +36,6 @@ public class VampireAbility : MonoBehaviour
     private void OnEnable()
     {
         _playerController.VimpireAbilityUsed += UseAbility;
-        _playerController.VimpireAbilityCanceled += CancelAbility;
         _detectionZone.EnemyCatched += StartStealHealthCoroutine;
         _detectionZone.EnemyLost += StopStealHealthCoroutine;
     }
@@ -44,7 +43,6 @@ public class VampireAbility : MonoBehaviour
     private void OnDisable()
     {
         _playerController.VimpireAbilityUsed -= UseAbility;
-        _playerController.VimpireAbilityCanceled -= CancelAbility;
         _detectionZone.EnemyCatched -= StartStealHealthCoroutine;
          _detectionZone.EnemyLost -= StopStealHealthCoroutine;
     }
@@ -73,7 +71,7 @@ public class VampireAbility : MonoBehaviour
     {
         TimeLeft = 0;
         AbilityActivated?.Invoke(_cooldownAbility);
-        _animator.SetBool(PlayerAnimator.IsVampirismFinish, true);
+        _animator.SetBool(PlayerAnimationStrings.IsVampirismFinish, true);
 
         while (TimeLeft <= _cooldownAbility)
         {
@@ -107,13 +105,13 @@ public class VampireAbility : MonoBehaviour
     private void CancelAbility()
     {
         TimeLeft = 0;
-        _animator.SetBool(PlayerAnimator.IsVampirismFinish, true);
+        _animator.SetBool(PlayerAnimationStrings.IsVampirismFinish, true);
         StopVampirismCoroutine();
     }
 
-    private IEnumerator StealHealth(EnemyHealthManager enemy)
+    private IEnumerator StealHealth(Health enemy)
     {
-        while (_animator.GetBool(PlayerAnimator.IsVampirismUse))
+        while (_animator.GetBool(PlayerAnimationStrings.IsVampirismUse))
         {
             enemy.LosingHealth(AbilityDamage);
             HealthStolen?.Invoke(AbilityDamage);
@@ -127,12 +125,12 @@ public class VampireAbility : MonoBehaviour
         }
     }
 
-    private void StartStealHealthCoroutine(EnemyHealthManager enemy)
+    private void StartStealHealthCoroutine(Health enemy)
     {
         _stealHealthCoroutine = StartCoroutine(StealHealth(enemy));
     }
 
-    private void StopStealHealthCoroutine(EnemyHealthManager enemy)
+    private void StopStealHealthCoroutine(Health enemy)
     {
         StopCoroutine(_stealHealthCoroutine);
     }

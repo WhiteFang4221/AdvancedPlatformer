@@ -90,7 +90,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80c88691717df0b468dae8fbc4705e0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _detectedColliders: []
 --- !u!1 &2504064493008504591
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 3660365102872830125}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.41, y: 3.86, z: 0}
+  m_LocalPosition: {x: -1.71, y: 5.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -189,7 +188,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: -0.51062703, y: -0.8539765}
   serializedVersion: 2
-  m_Radius: 1.6356957
+  m_Radius: 1.3
 --- !u!114 &1960621975726910986
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,10 +216,6 @@ GameObject:
   - component: {fileID: 1980640284097910596}
   - component: {fileID: 30166833814079943}
   - component: {fileID: 5940506227366183590}
-  - component: {fileID: 2227684415796760816}
-  - component: {fileID: 7124858693402138027}
-  - component: {fileID: 2860154779776500306}
-  - component: {fileID: 815724212545784406}
   m_Layer: 3
   m_Name: DarkWizard
   m_TagString: Enemy
@@ -381,79 +376,3 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!114 &2227684415796760816
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4311c19e61fd264eb25803321d0b8bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 50
-  currentHealth: 0
---- !u!114 &7124858693402138027
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3e60691d88074b54d9fd4e05eac9ac4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  castFilter:
-    useTriggers: 0
-    useLayerMask: 1
-    useDepth: 0
-    useOutsideDepth: 0
-    useNormalAngle: 0
-    useOutsideNormalAngle: 0
-    layerMask:
-      serializedVersion: 2
-      m_Bits: 1024
-    minDepth: 0
-    maxDepth: 0
-    minNormalAngle: 0
-    maxNormalAngle: 0
-  _isOnWall: 0
-  _wallCheckDistance: 2
---- !u!114 &2860154779776500306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbc383cda55469843a325330947f735b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerDetectingMask:
-    serializedVersion: 2
-    m_Bits: 256
-  _pointToPlayer: {fileID: 0}
-  _obstacleRayObject: {fileID: 5401304385370969504}
-  _detectionPlayerZone: {fileID: 6485795117035453283}
-  _obstacleRayDistance: 10
-  _obstacleRayDistanceBehind: 5
-  _isHasTarget: 0
---- !u!114 &815724212545784406
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7542908229675748597}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a85fdd152c0f234fb331195cc9bdecf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _moveSpeed: 5

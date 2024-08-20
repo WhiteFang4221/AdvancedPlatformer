@@ -2,18 +2,18 @@ using UnityEngine;
 
 public abstract class HealthBar : MonoBehaviour
 {
-    [SerializeField] protected HealthManager HealthManager;
+    [SerializeField] protected Health Health;
     
     protected float MaxPercentHealth = 100;
 
     private void OnEnable()
     {
-        HealthManager.HealthChanged += ShowNewValue;
+        Health.HealthChanged += ShowNewValue;
     }
 
     private void OnDisable()
     {
-        HealthManager.HealthChanged -= ShowNewValue;
+        Health.HealthChanged -= ShowNewValue;
     }
 
     protected abstract void ShowNewValue(float currentHealth, float MaxHealth);

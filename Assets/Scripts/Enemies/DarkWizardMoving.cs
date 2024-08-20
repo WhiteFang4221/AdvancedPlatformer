@@ -1,10 +1,10 @@
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(EnemySurfacesChecker))]
-[RequireComponent(typeof(DetectingPlayer), typeof(EnemyHealthManager))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(WallChecker))]
+[RequireComponent(typeof(DetectingPlayer), typeof(Health))]
 
-public class DarkWizardMoving : MonoBehaviour
+public class DarkWizardMoving : MonoBehaviour, IPushable
 {
     [SerializeField] private float _moveSpeed = 9f;
 
@@ -13,8 +13,8 @@ public class DarkWizardMoving : MonoBehaviour
     private Animator _animator;
     private Coroutine _stayCoroutine;
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
-    private EnemySurfacesChecker _surfacesChecker;
-    private EnemyHealthManager _enemyHealthManager;
+    private WallChecker _surfacesChecker;
+    private Health _enemyHealth;
 
     private bool _isMoving = true;
     private bool _isTrapped = false;
@@ -36,13 +36,13 @@ public class DarkWizardMoving : MonoBehaviour
         private set
         {
             _isMoving = value;
-            _animator.SetBool(EnemyStringsAnimator.IsMoving, value);
+            _animator.SetBool(EnemyAnimationStrings.IsMoving, value);
         }
     }
 
-    public bool IsAttacking => _animator.GetBool(EnemyStringsAnimator.IsAttacking);
+    public bool IsAttacking => _animator.GetBool(EnemyAnimationStrings.IsAttacking);
 
-    public bool IsAlive => _animator.GetBool(EnemyStringsAnimator.IsAlive);
+    public bool IsAlive => _animator.GetBool(EnemyAnimationStrings.IsAlive);
 
     public bool IsTrapped
     {
@@ -53,26 +53,26 @@ public class DarkWizardMoving : MonoBehaviour
         private set
         {
             _isTrapped = value;
-            _animator.SetBool(EnemyStringsAnimator.IsTrapped, value);
+            _animator.SetBool(EnemyAnimationStrings.IsTrapped, value);
         }
     }
 
     private void OnEnable()
     {
-        _enemyHealthManager.HitTaken += OnHit;
+        //_enemyHealth.HitTaken += OnHit;
     }
 
     private void OnDisable()
     {
-        _enemyHealthManager.HitTaken -= OnHit;
+        //_enemyHealth.HitTaken -= OnHit;
     }
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
-        _surfacesChecker = GetComponent<EnemySurfacesChecker>();
-        _enemyHealthManager = GetComponent<EnemyHealthManager>();
+        _surfacesChecker = GetComponent<WallChecker>();
+        _enemyHealth = GetComponent<Health>();
         _detectingPlayer = GetComponent<DetectingPlayer>();
     }
 
@@ -199,7 +199,7 @@ public class DarkWizardMoving : MonoBehaviour
         }
     }
 
-    private void OnHit(Vector2 knockback)
+    public void PushOffOnHit(Vector2 knockback)
     {
         _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
     }

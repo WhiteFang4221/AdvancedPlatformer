@@ -26,10 +26,10 @@ public class DetectingPlayer : MonoBehaviour
         private set
         {
             _isHasTarget = value;
-            _animator.SetBool(EnemyStringsAnimator.IsHasTarget, value);
+            _animator.SetBool(EnemyAnimationStrings.IsHasTarget, value);
         }
     }
-    public bool IsAlive => _animator.GetBool(EnemyStringsAnimator.IsAlive);
+    public bool IsAlive => _animator.GetBool(EnemyAnimationStrings.IsAlive);
 
     private void Awake()
     {

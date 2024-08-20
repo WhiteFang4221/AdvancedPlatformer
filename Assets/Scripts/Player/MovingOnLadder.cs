@@ -1,16 +1,16 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerController), typeof(Rigidbody2D), typeof(Animator))]
+[RequireComponent(typeof(PlayerMoving), typeof(Rigidbody2D), typeof(Animator))]
 [RequireComponent (typeof(SpriteRenderer))]
 
-public class LadderController : MonoBehaviour
+public class MovingOnLadder : MonoBehaviour
 {
     [SerializeField] private Transform _ladderChecker;
     [SerializeField] private Transform _bottomLadderChecker;
     [SerializeField] private LayerMask _ladderMask;
 
     private Animator _animator;
-    private PlayerController _playerController;
+    private PlayerMoving playerMoving;
     private Rigidbody2D _rigidbody;
 
     private bool _isLadderCheck;
@@ -18,13 +18,13 @@ public class LadderController : MonoBehaviour
     private bool _isLadderPositionCorrected = true;
     private float _ladderCenter;
 
-    public bool IsOnLadder => _animator.GetBool(PlayerAnimator.IsOnLadder);
+    public bool IsOnLadder => _animator.GetBool(PlayerAnimationStrings.IsOnLadder);
 
-    public Vector2 MoveInput => _playerController.MoveInput;
+    public Vector2 MoveInput => playerMoving.MoveInput;
 
     private void Awake()
     {
-        _playerController = GetComponent<PlayerController>();
+        playerMoving = GetComponent<PlayerMoving>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
     }
@@ -44,7 +44,7 @@ public class LadderController : MonoBehaviour
 
     private void CatchLadder()
     {
-        if (_playerController.IsRolling == false)
+        if (playerMoving.IsRolling == false)
         {
             if (_isLadderCheck || _isBottomLadderCheck)
             {
@@ -52,43 +52,44 @@ public class LadderController : MonoBehaviour
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, false);
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, false);
+                        _rigidbody.velocity = Vector2.zero;
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, true);
                     }
                 }
                 else if (_isLadderCheck && _isBottomLadderCheck) // на лестнице
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, true) ;
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, true) ;
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, true);
                     }
                 }
                 else if (_isLadderCheck && !_isBottomLadderCheck) // внизу
                 {
                     if (MoveInput.y > 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, true);
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, true);
                     }
                     else if (MoveInput.y < 0)
                     {
-                        _animator.SetBool(PlayerAnimator.IsOnLadder, false);
+                        _animator.SetBool(PlayerAnimationStrings.IsOnLadder, false);
                     }
                 }
             }
             else
             {
-                _animator.SetBool(PlayerAnimator.IsOnLadder, false);
+                _animator.SetBool(PlayerAnimationStrings.IsOnLadder, false);
             }
 
             ChangeBodyTypeOnLadder();
-            _animator.SetBool(PlayerAnimator.IsOnLadder, IsOnLadder);
+            _animator.SetBool(PlayerAnimationStrings.IsOnLadder, IsOnLadder);
         }
     }
 
@@ -101,7 +102,6 @@ public class LadderController : MonoBehaviour
         else
         {
             _rigidbody.bodyType = RigidbodyType2D.Dynamic;
-
         }
     }
 

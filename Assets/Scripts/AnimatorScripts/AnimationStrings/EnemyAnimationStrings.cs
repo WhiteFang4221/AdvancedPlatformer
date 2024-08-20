@@ -1,4 +1,4 @@
-public static class EnemyStringsAnimator
+public static class EnemyAnimationStrings
 {
     public const string IsGrounded = "IsGrounded";
     public const string IsMoving = "IsMoving";

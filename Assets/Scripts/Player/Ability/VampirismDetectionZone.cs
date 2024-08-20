@@ -5,27 +5,27 @@ using UnityEngine;
 [RequireComponent(typeof(VampireAbility))]
 public class VampirismDetectionZone : MonoBehaviour
 {
-    [SerializeField] private List<Collider2D> _detectedColliders = new List<Collider2D>();
+    [SerializeField] private List<Health> _detectedColliders = new List<Health>();
 
-    public Action<EnemyHealthManager> EnemyCatched;
-    public Action<EnemyHealthManager> EnemyLost;
+    public Action<Health> EnemyCatched;
+    public Action<Health> EnemyLost;
 
-    public IReadOnlyList<Collider2D> DetectedColliders => _detectedColliders;
+    public IReadOnlyList<Health> DetectedColliders => _detectedColliders;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out EnemyHealthManager enemy))
+        if (collision.TryGetComponent(out Health enemy))
         {
-            _detectedColliders.Add(collision);
+            _detectedColliders.Add(enemy);
             EnemyCatched?.Invoke(enemy);
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out EnemyHealthManager enemy))
+        if (collision.TryGetComponent(out Health enemy))
         {
-            _detectedColliders.Remove(collision);
+            _detectedColliders.Remove(enemy);
             EnemyLost?.Invoke(enemy);
         }
     }
