@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMoving), typeof(Rigidbody2D), typeof(Animator))]
-[RequireComponent (typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer), typeof(Rigidbody2D), typeof(Animator))]
 
 public class MovingOnLadder : MonoBehaviour
 {

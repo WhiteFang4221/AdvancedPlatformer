@@ -15,7 +15,6 @@ public class PlayerMoving : MonoBehaviour, IPushable
     [SerializeField] private float _rollPower = 30f;
     [SerializeField] private float _rollCooldown = 1;
 
-    public event Action Attacked;
     public event Action HealTried;
     public event Action VimpireAbilityUsed;
 
@@ -31,7 +30,7 @@ public class PlayerMoving : MonoBehaviour, IPushable
     private float _moveStopRate = 0.1f;
     private bool _isFaceRight = true;
     private bool _isCanRoll = true;
-    private bool _isMovingX = false; 
+    private bool _isMovingX = false;
 
     #region Свойства
     public Vector2 MoveInput => _moveInput;
@@ -111,7 +110,7 @@ public class PlayerMoving : MonoBehaviour, IPushable
             _animator.SetFloat(PlayerAnimationStrings.yVelocity, _rigidbody.velocity.y);
         }
 
-        else if (_animator.GetBool(PlayerAnimationStrings.IsAttacking) || _animator.GetBool(PlayerAnimationStrings.IsHealing) || _animator.GetBool(PlayerAnimationStrings.IsVampirismUse))
+        else if (_animator.GetBool(PlayerAnimationStrings.IsAttacking) || _animator.GetBool(PlayerAnimationStrings.IsHealing))
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);
         }
@@ -156,9 +155,9 @@ public class PlayerMoving : MonoBehaviour, IPushable
 
     public void Attack(InputAction.CallbackContext context)
     {
-        if (context.started && _groundChecker.IsGrounded && !_ladderChecker.IsOnLadder && !IsRolling && !_animator.GetBool(PlayerAnimationStrings.IsVampirismUse))
+        if (context.started && _groundChecker.IsGrounded && !_ladderChecker.IsOnLadder && !IsRolling)
         {
-            Attacked?.Invoke();
+            _animator.SetTrigger(PlayerAnimationStrings.AttackTrigger);
         }
     }
 
@@ -218,6 +217,9 @@ public class PlayerMoving : MonoBehaviour, IPushable
 
     public void PushOffOnHit(Vector2 knockback)
     {
-        _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
+        if (_animator.GetBool(PlayerAnimationStrings.IsAlive))
+        {
+            _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
+        }
     }
 }

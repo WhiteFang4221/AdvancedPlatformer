@@ -28,11 +28,13 @@ public class GroundChecker : MonoBehaviour
         if (_collisionDetector.IsIgnorePlatformCollider)
         {
             _isGrounded = false;
+            
         }
         else
         {
             _isGrounded = _capsuleCollider.Cast(Vector2.down, _castFilter, _groundHits, _groundDistance) > 0;
-            _animator.SetBool(PlayerAnimationStrings.IsGrounded, IsGrounded);
         }
+
+        _animator.SetBool(PlayerAnimationStrings.IsGrounded, IsGrounded);
     }
 }

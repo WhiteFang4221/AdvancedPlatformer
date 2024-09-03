@@ -1,62 +1,80 @@
+using HealthSystem;
 using System;
 using System.Collections;
 using UnityEngine;
 
-
-[RequireComponent (typeof(VampirismDetectionZone))]
+[RequireComponent(typeof(Animator), typeof(PlayerMoving), typeof(PlayerHealth))]
 public class VampireAbility : MonoBehaviour
 {
-    [SerializeField] private PlayerMoving _playerController;
-    [SerializeField] private PlayerHealPotion _playerHealthManager;
-    [SerializeField] private Animator _animator;
+    [SerializeField] private VampirismAura _vampirismAura;
     [SerializeField] private float _timeAbility = 6f;
     [SerializeField] private int _abilityDamage = 5;
     [SerializeField] private float _cooldownAbility = 10f;
 
-    private VampirismDetectionZone _detectionZone;
+    public event Action<float> AbilityActivated;
+
+    private Animator _animator;
+    private PlayerMoving _player;
+    private PlayerHealth _health;
+
+
     private Coroutine _vampirismCoroutine;
     private Coroutine _reloadAbilityCoroutine;
     private Coroutine _stealHealthCoroutine;
     private WaitForSeconds _timeTickHealth = new WaitForSeconds(1);
 
-    public Action<float> AbilityActivated;
-    public Action<int> HealthStolen;
-
-    public int AbilityDamage => _abilityDamage;
-
     public float TimeLeft { get; private set; } = 0;
-
     public bool IsCanUseAbility { get; private set; } = true;
+
 
     private void Awake()
     {
-        _detectionZone = GetComponent<VampirismDetectionZone>();
+        _animator = GetComponent<Animator>();
+        _player = GetComponent<PlayerMoving>();
+        _health = GetComponent<PlayerHealth>();
     }
 
     private void OnEnable()
     {
-        _playerController.VimpireAbilityUsed += UseAbility;
-        _detectionZone.EnemyCatched += StartStealHealthCoroutine;
-        _detectionZone.EnemyLost += StopStealHealthCoroutine;
+        _player.VimpireAbilityUsed += UseAbility;
+        _health.GotHit += CancelAbility;
     }
 
     private void OnDisable()
     {
-        _playerController.VimpireAbilityUsed -= UseAbility;
-        _detectionZone.EnemyCatched -= StartStealHealthCoroutine;
-         _detectionZone.EnemyLost -= StopStealHealthCoroutine;
+        _player.VimpireAbilityUsed -= UseAbility;
+        _health.GotHit -= CancelAbility;
+    }
+
+    private void OnDestroy()
+    {
+        StopAllCoroutines();
+        _player.VimpireAbilityUsed -= UseAbility;
+        _health.GotHit -= CancelAbility;
     }
 
     private void UseAbility()
     {
-        IsCanUseAbility = false;
-        _vampirismCoroutine = StartCoroutine(Vampirism());
+        if (!IsCanUseAbility)
+        {
+            return;
+        }
+
+        _animator.SetTrigger(PlayerAnimationStrings.VampireTrigger);
+        StartAbilityCoroutine();
     }
 
-    private IEnumerator Vampirism()
+    private IEnumerator AbilityCoroutine()
     {
-        TimeLeft = _timeAbility;
+        while (!_animator.GetBool(PlayerAnimationStrings.IsVampirismActive))
+        {
+            yield return null;
+        }
+
+        IsCanUseAbility = false;
         AbilityActivated?.Invoke(_timeAbility);
+        _vampirismAura.gameObject.SetActive(true);
+        TimeLeft = _timeAbility;
 
         while (TimeLeft >= 0)
         {
@@ -64,7 +82,7 @@ public class VampireAbility : MonoBehaviour
             yield return null;
         }
 
-        _reloadAbilityCoroutine = StartCoroutine(ReloadAbility());
+        StopAbilityCoroutine();
     }
 
     private IEnumerator ReloadAbility()
@@ -72,66 +90,46 @@ public class VampireAbility : MonoBehaviour
         TimeLeft = 0;
         AbilityActivated?.Invoke(_cooldownAbility);
         _animator.SetBool(PlayerAnimationStrings.IsVampirismFinish, true);
+        _vampirismAura.gameObject.SetActive(false);
 
         while (TimeLeft <= _cooldownAbility)
         {
             TimeLeft += Time.deltaTime;
             yield return null;
         }
-      
+
+        TimeLeft = 0;
         IsCanUseAbility = true;
     }
 
-    private void StartReloadAbility()
-    {
-        if (_reloadAbilityCoroutine != null)
-        {
-            StopCoroutine(_reloadAbilityCoroutine);
-        }
-
-        _reloadAbilityCoroutine = StartCoroutine(ReloadAbility());
-    }
-
-    private void StopVampirismCoroutine()
+    private void StartAbilityCoroutine()
     {
         if (_vampirismCoroutine != null)
         {
             StopCoroutine(_vampirismCoroutine);
+            _vampirismCoroutine = null;
         }
+        _vampirismCoroutine = StartCoroutine(AbilityCoroutine());
+    }
 
-        StartReloadAbility();
+    private void StopAbilityCoroutine()
+    {
+        if (_vampirismCoroutine != null)
+        {
+            StopCoroutine(_vampirismCoroutine);
+            _vampirismCoroutine = null;
+
+            if (_reloadAbilityCoroutine != null)
+            {
+                StopCoroutine(_reloadAbilityCoroutine);
+            }
+
+            _reloadAbilityCoroutine = StartCoroutine(ReloadAbility());
+        }
     }
 
     private void CancelAbility()
     {
-        TimeLeft = 0;
-        _animator.SetBool(PlayerAnimationStrings.IsVampirismFinish, true);
-        StopVampirismCoroutine();
-    }
-
-    private IEnumerator StealHealth(Health enemy)
-    {
-        while (_animator.GetBool(PlayerAnimationStrings.IsVampirismUse))
-        {
-            enemy.LosingHealth(AbilityDamage);
-            HealthStolen?.Invoke(AbilityDamage);
-
-            if (enemy.CurrentHealth <= 0)
-            {
-                StopStealHealthCoroutine(enemy);
-            }
-
-            yield return _timeTickHealth;
-        }
-    }
-
-    private void StartStealHealthCoroutine(Health enemy)
-    {
-        _stealHealthCoroutine = StartCoroutine(StealHealth(enemy));
-    }
-
-    private void StopStealHealthCoroutine(Health enemy)
-    {
-        StopCoroutine(_stealHealthCoroutine);
+        StopAbilityCoroutine();
     }
 }

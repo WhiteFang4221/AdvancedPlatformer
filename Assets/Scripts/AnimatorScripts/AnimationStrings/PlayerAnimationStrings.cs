@@ -14,6 +14,9 @@ public static class PlayerAnimationStrings
     public const string IsAlive = "IsAlive";
     public const string IsHealing = "IsHealing";
     public const string IsHealSucceeded = "IsHealSucceeded";
-    public const string IsVampirismUse = "IsVampirismUse";
+    public const string VampireTrigger = "VampireTrigger";
+    public const string IsVampirismActive = "IsVampirismActive";
     public const string IsVampirismFinish = "IsVampirismFinish";
+    public const string IsVampirismBroken = "IsVampirismBroken";
+
 }

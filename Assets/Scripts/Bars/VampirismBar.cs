@@ -9,7 +9,6 @@ public class VampirismBar : MonoBehaviour
     [SerializeField] private Image _fillArea;
     private Slider _slider;
 
-
     private void Awake()
     {
         _slider = GetComponent<Slider>();
@@ -28,10 +27,10 @@ public class VampirismBar : MonoBehaviour
     private void ChangeBar(float maxValue)
     {
         _slider.maxValue = maxValue;
-        StartCoroutine(ChangeHealthBarState());
+        StartCoroutine(ChangeBarState());
     }
 
-    private IEnumerator ChangeHealthBarState()
+    private IEnumerator ChangeBarState()
     {
         while (_vampireAbility.IsCanUseAbility == false)
         {
@@ -40,3 +39,4 @@ public class VampirismBar : MonoBehaviour
         }
     }
 }
+

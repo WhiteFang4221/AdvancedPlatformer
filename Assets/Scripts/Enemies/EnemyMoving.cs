@@ -1,12 +1,13 @@
+using HealthSystem;
 using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(WallChecker))]
 [RequireComponent(typeof(DetectingPlayer), typeof(Health))]
 
-public class DarkWizardMoving : MonoBehaviour, IPushable
+public class EnemyMoving : MonoBehaviour, IPushable
 {
-    [SerializeField] private float _moveSpeed = 9f;
+    [SerializeField] private float _moveSpeed = 6f;
 
     private DetectingPlayer _detectingPlayer;
     private Rigidbody2D _rigidbody;
@@ -14,7 +15,6 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
     private Coroutine _stayCoroutine;
     private WaitForSeconds _stayTime = new WaitForSeconds(3);
     private WallChecker _surfacesChecker;
-    private Health _enemyHealth;
 
     private bool _isMoving = true;
     private bool _isTrapped = false;
@@ -53,18 +53,8 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
         private set
         {
             _isTrapped = value;
-            _animator.SetBool(EnemyAnimationStrings.IsTrapped, value);
+            
         }
-    }
-
-    private void OnEnable()
-    {
-        //_enemyHealth.HitTaken += OnHit;
-    }
-
-    private void OnDisable()
-    {
-        //_enemyHealth.HitTaken -= OnHit;
     }
 
     private void Awake()
@@ -72,7 +62,6 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _surfacesChecker = GetComponent<WallChecker>();
-        _enemyHealth = GetComponent<Health>();
         _detectingPlayer = GetComponent<DetectingPlayer>();
     }
 
@@ -108,20 +97,6 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
         {
             playerPoint.gameObject.SetActive(false);
             StartStayCoroutine();
-        }
-
-
-        if (collision.TryGetComponent(out VampireAbility ability))
-        {
-            IsTrapped = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collision.TryGetComponent(out VampireAbility ability))
-        {
-            IsTrapped = false;
         }
     }
 
@@ -187,6 +162,7 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
         {
             StopCoroutine(_stayCoroutine);
         }
+
         _stayCoroutine = StartCoroutine(Stay());
     }
 
@@ -202,5 +178,17 @@ public class DarkWizardMoving : MonoBehaviour, IPushable
     public void PushOffOnHit(Vector2 knockback)
     {
         _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
+    }
+
+    public void GotTrap()
+    {
+        IsTrapped = true;
+        _animator.SetBool(EnemyAnimationStrings.IsTrapped, IsTrapped);
+    }
+
+    public void GetOutTrap()
+    {
+        IsTrapped = false;
+        _animator.SetBool(EnemyAnimationStrings.IsTrapped, IsTrapped);
     }
 }

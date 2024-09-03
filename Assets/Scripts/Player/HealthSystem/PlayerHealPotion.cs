@@ -1,3 +1,4 @@
+using HealthSystem;
 using System;
 using UnityEngine;
 
@@ -57,8 +58,8 @@ public class PlayerHealPotion : MonoBehaviour
     {
         if (IsHealSuccsed && _isCanHeal)
         {
-            SpendPotion();
             _isCanHeal = false;
+            SpendPotion();
         }
 
         if (_isCanHeal == false)
@@ -95,6 +96,9 @@ public class PlayerHealPotion : MonoBehaviour
 
     private void TryToHeal()
     {
-        IsHealing = true;
+        if (PotionHealQuantity > 0)
+        {
+            IsHealing = true;
+        }
     }
 }

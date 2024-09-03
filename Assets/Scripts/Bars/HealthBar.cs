@@ -1,3 +1,4 @@
+using HealthSystem;
 using UnityEngine;
 
 public abstract class HealthBar : MonoBehaviour
