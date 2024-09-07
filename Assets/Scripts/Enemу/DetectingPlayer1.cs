@@ -2,12 +2,12 @@ using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
 
-public class DetectingPlayer : MonoBehaviour
+public class DetectingPlayer1 : MonoBehaviour
 {
     [SerializeField] private LayerMask _playerDetectingMask;
     [SerializeField] private PointToPlayer _pointToPlayer;
-    [SerializeField] private Transform _obstacleRayObject;
-    [SerializeField] private DetectionZone _detectionPlayerZone;
+    [SerializeField] private RayObstacle _obstacleRayObject;
+    [SerializeField] private DetectionZone _detectionZone;
     [SerializeField] private float _obstacleRayDistance = 10f;
     [SerializeField] private float _obstacleRayDistanceBehind = 5f;
     [SerializeField] private bool _isHasTarget = false;
@@ -48,7 +48,7 @@ public class DetectingPlayer : MonoBehaviour
                 DetectPlayerBehind();
             }
 
-            IsHasTarget = _detectionPlayerZone.DetectedColliders.Count > 0;
+            IsHasTarget = _detectionZone.DetectedColliders.Count > 0;
         }
     }
 

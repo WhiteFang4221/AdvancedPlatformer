@@ -1,7 +1,4 @@
 using UnityEngine;
-using HealthSystem;
-
-[RequireComponent(typeof(Animator))]
 
 public class Attacker : MonoBehaviour
 {
@@ -9,7 +6,7 @@ public class Attacker : MonoBehaviour
     [SerializeField] private int _damage = 10;
     [SerializeField] private Vector2 _knockback;
 
-    private  Animator _animator;
+    private Animator _animator;
 
     private void OnEnable()
     {
@@ -23,7 +20,7 @@ public class Attacker : MonoBehaviour
         _attackZone.TargetPushed -= PushTarget;
     }
 
-    private void DoDamage(Health target)
+    private void DoDamage(IDamageable target)
     {
         target.TakeDamage(_damage);
     }

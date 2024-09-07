@@ -1,15 +1,14 @@
-using HealthSystem;
 using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(WallChecker))]
-[RequireComponent(typeof(DetectingPlayer), typeof(Health))]
+[RequireComponent(typeof(DetectingPlayer1))]
 
-public class EnemyMoving : MonoBehaviour, IPushable
+public class EnemyMoving1 : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 6f;
 
-    private DetectingPlayer _detectingPlayer;
+    private DetectingPlayer1 _detectingPlayer;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
     private Coroutine _stayCoroutine;
@@ -19,12 +18,13 @@ public class EnemyMoving : MonoBehaviour, IPushable
     private bool _isMoving = true;
     private bool _isTrapped = false;
     private bool _isFaceRight = true;
+    private bool _isAttacking => _animator.GetBool(EnemyAnimationStrings.IsAttacking);
 
     public bool IsMoving
     {
         get
         {
-            if (_detectingPlayer.IsHasTarget == true || IsAlive == false)
+            if (_detectingPlayer.IsHasTarget == true || IsAlive == false || _isTrapped)
             {
                 return false;
             }
@@ -40,41 +40,30 @@ public class EnemyMoving : MonoBehaviour, IPushable
         }
     }
 
-    public bool IsAttacking => _animator.GetBool(EnemyAnimationStrings.IsAttacking);
 
     public bool IsAlive => _animator.GetBool(EnemyAnimationStrings.IsAlive);
-
-    public bool IsTrapped
-    {
-        get
-        {
-            return _isTrapped;
-        }
-        private set
-        {
-            _isTrapped = value;
-            
-        }
-    }
 
     private void Awake()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _surfacesChecker = GetComponent<WallChecker>();
-        _detectingPlayer = GetComponent<DetectingPlayer>();
+        _detectingPlayer = GetComponent<DetectingPlayer1>();
     }
 
     private void Update()
     {
-        if (!_detectingPlayer.PointToPlayer.isActiveAndEnabled)
+        if (!_isTrapped)
         {
-            Patrol();
-        }
-        else
-        {
-            LookAtTarget(_detectingPlayer.PointToPlayer.transform.position);
-            GoToPlayer();
+            if (!_detectingPlayer.PointToPlayer.isActiveAndEnabled)
+            {
+                Patrol();
+            }
+            else
+            {
+                LookAtTarget(_detectingPlayer.PointToPlayer.transform.position);
+                GoToTarget();
+            }
         }
     }
 
@@ -100,6 +89,16 @@ public class EnemyMoving : MonoBehaviour, IPushable
         }
     }
 
+    public void GettingStuck()
+    {
+        _isTrapped = true;
+    }
+
+    public void GetOutStuck()
+    {
+        _isTrapped = false;
+    }
+
     private void Patrol()
     {
         if (_surfacesChecker.IsOnWall)
@@ -107,7 +106,7 @@ public class EnemyMoving : MonoBehaviour, IPushable
             StartStayCoroutine();
         }
 
-        if (IsMoving && !IsAttacking)
+        if (IsMoving && !_isAttacking)
         {
             _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
         }
@@ -117,12 +116,12 @@ public class EnemyMoving : MonoBehaviour, IPushable
         }
     }
 
-    private void GoToPlayer()
+    private void GoToTarget()
     {
         StopStayCoroutine();
         IsMoving = true;
 
-        if (IsMoving && !IsAttacking)
+        if (IsMoving && !_isAttacking)
         {
             _rigidbody.velocity = new Vector2(_moveSpeed * transform.localScale.x, _rigidbody.velocity.y);
         }
@@ -130,7 +129,7 @@ public class EnemyMoving : MonoBehaviour, IPushable
 
     private void LookAtTarget(Vector2 target)
     {
-        if (!IsAttacking)
+        if (!_isAttacking)
         {
             if (transform.position.x > target.x && _isFaceRight)
             {
@@ -173,22 +172,5 @@ public class EnemyMoving : MonoBehaviour, IPushable
             StopCoroutine(_stayCoroutine);
             _stayCoroutine = null;
         }
-    }
-
-    public void PushOffOnHit(Vector2 knockback)
-    {
-        _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
-    }
-
-    public void GotTrap()
-    {
-        IsTrapped = true;
-        _animator.SetBool(EnemyAnimationStrings.IsTrapped, IsTrapped);
-    }
-
-    public void GetOutTrap()
-    {
-        IsTrapped = false;
-        _animator.SetBool(EnemyAnimationStrings.IsTrapped, IsTrapped);
-    }
+    } 
 }

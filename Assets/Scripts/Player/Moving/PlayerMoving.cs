@@ -4,9 +4,9 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(SpriteRenderer))]
-[RequireComponent(typeof(CapsuleCollider2D), typeof(GroundChecker), typeof(MovingOnLadder))]
+[RequireComponent(typeof(CapsuleCollider2D), typeof(GroundChecker), typeof(LadderChecker))]
 
-public class PlayerMoving : MonoBehaviour, IPushable
+public class PlayerMoving : MonoBehaviour
 {
     [SerializeField] private float _moveSpeed = 12f;
     [SerializeField] private float _ladderSpeed = 6f;
@@ -21,7 +21,7 @@ public class PlayerMoving : MonoBehaviour, IPushable
     private Vector2 _moveInput;
     private Rigidbody2D _rigidbody;
     private GroundChecker _groundChecker;
-    private MovingOnLadder _ladderChecker;
+    private LadderChecker _ladderChecker;
     private Animator _animator;
 
     private Coroutine _dashCoroutine;
@@ -93,7 +93,7 @@ public class PlayerMoving : MonoBehaviour, IPushable
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _groundChecker = GetComponent<GroundChecker>();
-        _ladderChecker = GetComponent<MovingOnLadder>();
+        _ladderChecker = GetComponent<LadderChecker>();
     }
 
     private void FixedUpdate()
@@ -117,15 +117,6 @@ public class PlayerMoving : MonoBehaviour, IPushable
         else if (!IsAlive)
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _moveStopRate), _rigidbody.velocity.y);
-        }
-    }
-
-    private void TurnAround()
-    {
-        if ((_moveInput.x > 0 && !_isFaceRight) || (_moveInput.x < 0 && _isFaceRight))
-        {
-            transform.localScale *= new Vector2(-1, 1);
-            _isFaceRight = !_isFaceRight;
         }
     }
 
@@ -181,10 +172,19 @@ public class PlayerMoving : MonoBehaviour, IPushable
     {
         if (context.started && IsCanMove && _groundChecker.IsGrounded)
         {
+            _rigidbody.velocity = Vector2.zero;
             VimpireAbilityUsed?.Invoke();
         }
     }
     #endregion
+
+    public void PushOffOnHit(Vector2 knockback)
+    {
+        if (_animator.GetBool(PlayerAnimationStrings.IsAlive))
+        {
+            _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
+        }
+    }
 
     private IEnumerator RollOverCoroutine()
     {
@@ -215,11 +215,12 @@ public class PlayerMoving : MonoBehaviour, IPushable
         _dashCoroutine = StartCoroutine(RollOverCoroutine());
     }
 
-    public void PushOffOnHit(Vector2 knockback)
+    private void TurnAround()
     {
-        if (_animator.GetBool(PlayerAnimationStrings.IsAlive))
+        if ((_moveInput.x > 0 && !_isFaceRight) || (_moveInput.x < 0 && _isFaceRight))
         {
-            _rigidbody.velocity = new Vector2(knockback.x, _rigidbody.velocity.y + knockback.y);
+            transform.localScale *= new Vector2(-1, 1);
+            _isFaceRight = !_isFaceRight;
         }
     }
 }

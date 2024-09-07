@@ -14,15 +14,15 @@ GameObject:
   - component: {fileID: 5886727396516088707}
   - component: {fileID: 4793062175521122860}
   - component: {fileID: 5517909474879604571}
-  - component: {fileID: 1154088535669729388}
-  - component: {fileID: 3162592676471998647}
-  - component: {fileID: 2893762892882189907}
-  - component: {fileID: 6031538129767971717}
-  - component: {fileID: 2700775162938092989}
-  - component: {fileID: 147788231755033363}
-  - component: {fileID: 1847002366908441847}
-  - component: {fileID: 3402817641179225374}
-  - component: {fileID: 507558958121022450}
+  - component: {fileID: 8314098748171409176}
+  - component: {fileID: 5759239330405070568}
+  - component: {fileID: 6612749577010628270}
+  - component: {fileID: 5634262143015950957}
+  - component: {fileID: 3996776380861458055}
+  - component: {fileID: 202134253814801614}
+  - component: {fileID: 7484216923128892097}
+  - component: {fileID: 481086965739817348}
+  - component: {fileID: 8039956846920098710}
   m_Layer: 8
   m_Name: Knight
   m_TagString: Untagged
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
         m_MethodName: Move
         m_Mode: 0
@@ -227,7 +227,7 @@ MonoBehaviour:
     m_ActionName: Player/Move[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
         m_MethodName: Attack
         m_Mode: 0
@@ -283,7 +283,7 @@ MonoBehaviour:
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
         m_MethodName: Jump
         m_Mode: 0
@@ -299,7 +299,7 @@ MonoBehaviour:
     m_ActionName: Player/Jump[/Keyboard/space]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
         m_MethodName: RollOver
         m_Mode: 0
@@ -315,7 +315,7 @@ MonoBehaviour:
     m_ActionName: Player/RollOver[/Keyboard/leftShift]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
         m_MethodName: Heal
         m_Mode: 0
@@ -331,9 +331,9 @@ MonoBehaviour:
     m_ActionName: Player/Healing[/Keyboard/q]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3162592676471998647}
+      - m_Target: {fileID: 6612749577010628270}
         m_TargetAssemblyTypeName: PlayerMoving, Assembly-CSharp
-        m_MethodName: UseVimpireAbility
+        m_MethodName: 
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -354,7 +354,7 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &1154088535669729388
+--- !u!114 &8314098748171409176
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -363,12 +363,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 937477063344615792}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a6e150c6a30e1a429d781a28b94db25, type: 3}
+  m_Script: {fileID: 11500000, guid: 2e7b2348e2be5834eb2885966e647739, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
-  <CurrentHealth>k__BackingField: 0
---- !u!114 &3162592676471998647
+--- !u!114 &5759239330405070568
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -377,7 +375,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 937477063344615792}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c5f79824cc684448965819d1e5724f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 74c16097586020e418af82bdd254eed0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _player: {fileID: 8314098748171409176}
+  _bar: {fileID: 0}
+--- !u!114 &6612749577010628270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937477063344615792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9fab3e2fe4955b41bfc0219f1d4d13c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _moveSpeed: 12
@@ -385,56 +397,8 @@ MonoBehaviour:
   _airMoveSpeed: 8
   _jumpForce: 18
   _rollPower: 30
-  _rollCooldown: 2
---- !u!114 &2893762892882189907
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937477063344615792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 574cad4c2760e5c459def488b1635982, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _attackZone: {fileID: 1750732672436949356}
-  _damage: 10
-  _knockback: {x: 5, y: 0}
---- !u!114 &6031538129767971717
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937477063344615792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 090e1ab2474c4e849aa1336740f59dc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maxPotionQuantity: 3
-  _potionHealEffect: 30
-  _healCooldown: 1
-  <PotionHealQuantity>k__BackingField: 2
---- !u!114 &2700775162938092989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 937477063344615792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cbe7c0a589c51014cba27939c18ebf24, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _ladderChecker: {fileID: 5668054081417745716}
-  _bottomLadderChecker: {fileID: 6603552993833923483}
-  _ladderMask:
-    serializedVersion: 2
-    m_Bits: 64
---- !u!114 &147788231755033363
+  _rollCooldown: 1
+--- !u!114 &5634262143015950957
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -461,7 +425,7 @@ MonoBehaviour:
     minNormalAngle: 0
     maxNormalAngle: 0
   _groundDistance: 0.05
---- !u!114 &1847002366908441847
+--- !u!114 &3996776380861458055
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -473,7 +437,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0168bf7b254eb84aa2fa18260ae73e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3402817641179225374
+--- !u!114 &202134253814801614
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937477063344615792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9f60db84499192478e8823ea7ed5020, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ladderChecker: {fileID: 5668054081417745716}
+  _bottomLadderChecker: {fileID: 6603552993833923483}
+  _ladderMask:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &7484216923128892097
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -486,7 +467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _audioSource: {fileID: 0}
---- !u!114 &507558958121022450
+--- !u!114 &481086965739817348
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -495,13 +476,28 @@ MonoBehaviour:
   m_GameObject: {fileID: 937477063344615792}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e9af6506255a9646afa8174cc4bf395, type: 3}
+  m_Script: {fileID: 11500000, guid: 574cad4c2760e5c459def488b1635982, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _vampirismAura: {fileID: 772409046206293512}
-  _timeAbility: 6
-  _abilityDamage: 5
-  _cooldownAbility: 10
+  _attackZone: {fileID: 1235734966665731846}
+  _damage: 10
+  _knockback: {x: 5, y: 0}
+--- !u!114 &8039956846920098710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937477063344615792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 090e1ab2474c4e849aa1336740f59dc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxPotionQuantity: 3
+  _potionHealEffect: 30
+  _healCooldown: 1
+  <PotionHealQuantity>k__BackingField: 2
 --- !u!1 &2920883343881735676
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,7 +577,6 @@ GameObject:
   - component: {fileID: 386635914033457818}
   - component: {fileID: 8468025488846285626}
   - component: {fileID: 8508840994155968270}
-  - component: {fileID: 772409046206293512}
   m_Layer: 16
   m_Name: VimpireAura
   m_TagString: Untagged
@@ -712,19 +707,6 @@ CircleCollider2D:
   m_Offset: {x: 0.29069972, y: -0.31683588}
   serializedVersion: 2
   m_Radius: 1.8367755
---- !u!114 &772409046206293512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6431270450579849006}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22fab66ba0debff40b771eeccc4e704c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _detectedColliders: []
 --- !u!1 &6873615227414995923
 GameObject:
   m_ObjectHideFlags: 0
@@ -802,7 +784,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6720740801454340115}
   - component: {fileID: 368058321456176574}
-  - component: {fileID: 1750732672436949356}
+  - component: {fileID: 1235734966665731846}
   m_Layer: 13
   m_Name: Sword
   m_TagString: Untagged
@@ -878,7 +860,7 @@ PolygonCollider2D:
       - {x: 0.6919266, y: -0.906616}
       - {x: 0.68736553, y: 0.21393865}
   m_UseDelaunayMesh: 0
---- !u!114 &1750732672436949356
+--- !u!114 &1235734966665731846
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

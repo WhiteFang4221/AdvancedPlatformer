@@ -1,9 +1,8 @@
-using HealthSystem;
 using System;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(Animator), typeof(PlayerMoving), typeof(PlayerHealth))]
+[RequireComponent(typeof(Animator), typeof(PlayerMoving), typeof(Player))]
 public class VampireAbility : MonoBehaviour
 {
     [SerializeField] private VampirismAura _vampirismAura;
@@ -11,16 +10,15 @@ public class VampireAbility : MonoBehaviour
     [SerializeField] private int _abilityDamage = 5;
     [SerializeField] private float _cooldownAbility = 10f;
 
-    public event Action<float> AbilityActivated;
+    public event Action<float> Activated;
 
     private Animator _animator;
-    private PlayerMoving _player;
-    private PlayerHealth _health;
+    private Player _player;
+    private PlayerMoving _playerMoving;
 
-
-    private Coroutine _vampirismCoroutine;
+    private Coroutine _abilityCoroutine;
     private Coroutine _reloadAbilityCoroutine;
-    private Coroutine _stealHealthCoroutine;
+    private Coroutine _vampireCoroutine;
     private WaitForSeconds _timeTickHealth = new WaitForSeconds(1);
 
     public float TimeLeft { get; private set; } = 0;
@@ -30,27 +28,26 @@ public class VampireAbility : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _player = GetComponent<PlayerMoving>();
-        _health = GetComponent<PlayerHealth>();
+        _playerMoving = GetComponent<PlayerMoving>();
+        _player = GetComponent<Player>();   
     }
 
     private void OnEnable()
     {
-        _player.VimpireAbilityUsed += UseAbility;
-        _health.GotHit += CancelAbility;
+        _playerMoving.VimpireAbilityUsed += UseAbility;        
+        _vampirismAura.Catched += StartStealHealth;
     }
 
     private void OnDisable()
     {
-        _player.VimpireAbilityUsed -= UseAbility;
-        _health.GotHit -= CancelAbility;
+        _playerMoving.VimpireAbilityUsed -= UseAbility;
+        _vampirismAura.Catched -= StartStealHealth;
     }
 
     private void OnDestroy()
     {
         StopAllCoroutines();
-        _player.VimpireAbilityUsed -= UseAbility;
-        _health.GotHit -= CancelAbility;
+        _playerMoving.VimpireAbilityUsed -= UseAbility;
     }
 
     private void UseAbility()
@@ -72,13 +69,19 @@ public class VampireAbility : MonoBehaviour
         }
 
         IsCanUseAbility = false;
-        AbilityActivated?.Invoke(_timeAbility);
+        Activated?.Invoke(_timeAbility);
         _vampirismAura.gameObject.SetActive(true);
         TimeLeft = _timeAbility;
 
         while (TimeLeft >= 0)
         {
             TimeLeft -= Time.deltaTime;
+
+            if (_animator.GetBool(PlayerAnimationStrings.IsVampirismBroken))
+            {
+                CancelAbility();
+            }
+
             yield return null;
         }
 
@@ -88,7 +91,7 @@ public class VampireAbility : MonoBehaviour
     private IEnumerator ReloadAbility()
     {
         TimeLeft = 0;
-        AbilityActivated?.Invoke(_cooldownAbility);
+        Activated?.Invoke(_cooldownAbility);
         _animator.SetBool(PlayerAnimationStrings.IsVampirismFinish, true);
         _vampirismAura.gameObject.SetActive(false);
 
@@ -104,20 +107,19 @@ public class VampireAbility : MonoBehaviour
 
     private void StartAbilityCoroutine()
     {
-        if (_vampirismCoroutine != null)
+        if (_abilityCoroutine != null)
         {
-            StopCoroutine(_vampirismCoroutine);
-            _vampirismCoroutine = null;
+            StopCoroutine(_abilityCoroutine);
         }
-        _vampirismCoroutine = StartCoroutine(AbilityCoroutine());
+        _abilityCoroutine = StartCoroutine(AbilityCoroutine());
     }
 
     private void StopAbilityCoroutine()
     {
-        if (_vampirismCoroutine != null)
+        if (_abilityCoroutine != null)
         {
-            StopCoroutine(_vampirismCoroutine);
-            _vampirismCoroutine = null;
+            StopCoroutine(_abilityCoroutine);
+            _abilityCoroutine = null;
 
             if (_reloadAbilityCoroutine != null)
             {
@@ -131,5 +133,24 @@ public class VampireAbility : MonoBehaviour
     private void CancelAbility()
     {
         StopAbilityCoroutine();
+    }
+
+    private IEnumerator StealHealthCoroutine(float healthPoints)
+    {
+        while (_vampirismAura.DetectedColliders.Count != 0)
+        {
+            _player.Heal(healthPoints);
+            yield return _timeTickHealth;
+        }
+    }
+
+    private void StartStealHealth(float healthPoints)
+    {
+        if (_vampireCoroutine != null)
+        {
+            StopCoroutine(_vampireCoroutine);
+        }
+
+        _vampireCoroutine = StartCoroutine(StealHealthCoroutine(healthPoints));
     }
 }

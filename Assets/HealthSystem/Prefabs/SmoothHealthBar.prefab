@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4552118429886941521}
   - component: {fileID: 4552118429886941520}
-  - component: {fileID: -2221545306433262717}
+  - component: {fileID: 2159356458350057335}
   m_Layer: 5
   m_Name: SmoothHealthBar
   m_TagString: Untagged
@@ -91,7 +91,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &-2221545306433262717
+--- !u!114 &2159356458350057335
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,8 +103,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a43aa436ae9f46a44b0f05a76c472d0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthManager: {fileID: 0}
-  _slider: {fileID: 4552118429886941520}
 --- !u!1 &4552118430015905865
 GameObject:
   m_ObjectHideFlags: 0
@@ -192,7 +190,7 @@ GameObject:
   - component: {fileID: 4552118431903239771}
   - component: {fileID: 4552118431903239780}
   - component: {fileID: 4552118431903239769}
-  - component: {fileID: 4552118431903239770}
+  - component: {fileID: 653557088328027557}
   m_Layer: 5
   m_Name: Heart
   m_TagString: Untagged
@@ -278,7 +276,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4552118431903239770
+--- !u!114 &653557088328027557
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -290,7 +288,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a54a594c69dbda4d91d33832cc3aff5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthBar: {fileID: -2221545306433262717}
+  _bar: {fileID: 2159356458350057335}
 --- !u!1 &4552118431929678955
 GameObject:
   m_ObjectHideFlags: 0

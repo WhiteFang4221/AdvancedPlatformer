@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 584706288827000290}
   - component: {fileID: 5346504401947203781}
-  - component: {fileID: 6889563086839066752}
+  - component: {fileID: 32647960904819543}
   m_Layer: 0
   m_Name: lastPlayerPositionPoint
   m_TagString: Untagged
@@ -68,7 +68,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
---- !u!114 &6889563086839066752
+--- !u!114 &32647960904819543
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -77,6 +77,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 124716632131544218}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24cf5fcbffd5e0c4e9a9541191b3361b, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f325e0edeeb3c540bb84125e4ac7dd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

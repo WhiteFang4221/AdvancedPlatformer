@@ -1,15 +1,15 @@
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer), typeof(Rigidbody2D), typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
 
-public class MovingOnLadder : MonoBehaviour
+public class LadderChecker : MonoBehaviour
 {
     [SerializeField] private Transform _ladderChecker;
     [SerializeField] private Transform _bottomLadderChecker;
     [SerializeField] private LayerMask _ladderMask;
 
     private Animator _animator;
-    private PlayerMoving playerMoving;
+    private PlayerMoving _playerMoving;
     private Rigidbody2D _rigidbody;
 
     private bool _isLadderCheck;
@@ -19,11 +19,11 @@ public class MovingOnLadder : MonoBehaviour
 
     public bool IsOnLadder => _animator.GetBool(PlayerAnimationStrings.IsOnLadder);
 
-    public Vector2 MoveInput => playerMoving.MoveInput;
+    public Vector2 MoveInput => _playerMoving.MoveInput;
 
     private void Awake()
     {
-        playerMoving = GetComponent<PlayerMoving>();
+        _playerMoving = GetComponent<PlayerMoving>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
     }
@@ -43,7 +43,7 @@ public class MovingOnLadder : MonoBehaviour
 
     private void CatchLadder()
     {
-        if (playerMoving.IsRolling == false)
+        if (_playerMoving.IsRolling == false)
         {
             if (_isLadderCheck || _isBottomLadderCheck)
             {

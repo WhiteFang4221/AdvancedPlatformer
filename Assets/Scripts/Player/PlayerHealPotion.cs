@@ -1,45 +1,30 @@
-using HealthSystem;
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerMoving), typeof(Animator), typeof(Health))]
+[RequireComponent(typeof(PlayerMoving), typeof(Animator))]
 public class PlayerHealPotion : MonoBehaviour
 {
-    [SerializeField] private int _maxPotionQuantity = 3;
-    [SerializeField] private int _potionHealEffect = 30;
-    [SerializeField] private float _healCooldown = 1f;
+    [SerializeField] private int _maxQuantity = 3;
+    [SerializeField] private int EffectPoints = 30;
+    [SerializeField] private float _cooldown = 1f;
 
-    public event Action<int> PotionUsed;
-    private float _healCooldownLeft = 0;
+    public event Action<int> Used;
+    private float _cooldownLeft = 0;
 
-    private Health _health;
+    private Player _player;
     private PlayerMoving _playerMoving;
     private Animator _animator;
 
     private bool _isCanHeal = true;
     private bool _isHealing = false;
+    private bool _isHealSuccsed => _animator.GetBool(PlayerAnimationStrings.IsHealSucceeded);
 
     [field: SerializeField] public int PotionHealQuantity { get; private set; } = 0;
 
 
-    public bool IsHealing
-    {
-        get
-        {
-            return _isHealing;
-        }
-        private set
-        {
-            _isHealing = value;
-            _animator.SetBool(PlayerAnimationStrings.IsHealing, true);
-        }
-    }
-
-    public bool IsHealSuccsed => _animator.GetBool(PlayerAnimationStrings.IsHealSucceeded);
-
     private void Awake()
     {
-        _health = GetComponent<Health>();
+        _player = GetComponent<Player>();
         _playerMoving = GetComponent<PlayerMoving>();
         _animator = GetComponent<Animator>();
     }
@@ -56,22 +41,25 @@ public class PlayerHealPotion : MonoBehaviour
 
     private void Update()
     {
-        if (IsHealSuccsed && _isCanHeal)
+        if (_isHealSuccsed && _isCanHeal)
         {
+            _isHealing = false;
+            _animator.SetBool(PlayerAnimationStrings.IsHealing, _isHealing);
             _isCanHeal = false;
             SpendPotion();
+            _player.Heal(EffectPoints);
         }
 
         if (_isCanHeal == false)
         {
-            if (_healCooldownLeft >= _healCooldown)
+            if (_cooldownLeft >= _cooldown)
             {
                 _isCanHeal = true;
-                _healCooldownLeft = 0;
+                _cooldownLeft = 0;
             }
             else
             {
-                _healCooldownLeft += Time.deltaTime;
+                _cooldownLeft += Time.deltaTime;
             }
         }
     }
@@ -80,7 +68,7 @@ public class PlayerHealPotion : MonoBehaviour
     {
         if (collision.TryGetComponent(out HealPotion potion))
         {
-            if (PotionHealQuantity < _maxPotionQuantity)
+            if (PotionHealQuantity < _maxQuantity)
             {
                 PotionHealQuantity++;
                 Destroy(potion.gameObject);
@@ -91,14 +79,15 @@ public class PlayerHealPotion : MonoBehaviour
     private void SpendPotion()
     {
         PotionHealQuantity--;
-        PotionUsed?.Invoke(_potionHealEffect);
+        Used?.Invoke(EffectPoints);
     }
 
     private void TryToHeal()
     {
         if (PotionHealQuantity > 0)
         {
-            IsHealing = true;
+            _isHealing = true;
+            _animator.SetBool(PlayerAnimationStrings.IsHealing, _isHealing);
         }
     }
 }

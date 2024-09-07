@@ -1,11 +1,10 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class VampirismBar : MonoBehaviour
 {
-    [SerializeField] private VampireAbility _vampireAbility;
+    [SerializeField] VampireAbility _vampireAbility;
     [SerializeField] private Image _fillArea;
     private Slider _slider;
 
@@ -16,12 +15,12 @@ public class VampirismBar : MonoBehaviour
 
     private void OnEnable()
     {
-        _vampireAbility.AbilityActivated += ChangeBar;
+        _vampireAbility.Activated += ChangeBar;
     }
 
     private void OnDisable()
     {
-        _vampireAbility.AbilityActivated -= ChangeBar;
+        _vampireAbility.Activated -= ChangeBar;
     }
 
     private void ChangeBar(float maxValue)

@@ -1,3 +1,4 @@
+using Bars;
 using UnityEngine;
 [RequireComponent(typeof(Animator))]
 
@@ -8,19 +9,19 @@ public static class AnimatorHeartController
 
 public class HeartChanger : MonoBehaviour
 {
-    [SerializeField] private SmoothHealthBar _healthBar;
+    [SerializeField] private PlayerBar _bar;
 
     private Animator _animator;
     private float _maxPercentHealth = 100;
 
-    private void OnEnable() 
+    private void OnEnable()
     {
-        _healthBar.HealthSliderChanged += ChangeState;
+        _bar.HealthSliderChanged += ChangeState;
     }
 
     private void OnDisable()
     {
-        _healthBar.HealthSliderChanged -= ChangeState;
+        _bar.HealthSliderChanged -= ChangeState;
     }
 
     private void Start()
@@ -29,7 +30,7 @@ public class HeartChanger : MonoBehaviour
         _animator.SetFloat(AnimatorHeartController.PlayerHealth, _maxPercentHealth);
     }
 
-    private void ChangeState(float maxHealth, float currentHealth)
+    private void ChangeState(float currentHealth, float maxHealth)
     {
         float currentPercentHealth = (currentHealth * _maxPercentHealth) / maxHealth;
         _animator.SetFloat(AnimatorHeartController.PlayerHealth, currentPercentHealth);

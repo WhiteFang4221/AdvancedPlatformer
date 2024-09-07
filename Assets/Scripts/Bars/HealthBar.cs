@@ -1,21 +1,33 @@
-using HealthSystem;
 using UnityEngine;
+using UnityEngine.UI;
 
-public abstract class HealthBar : MonoBehaviour
+namespace Bars
 {
-    [SerializeField] protected Health Health;
-    
-    protected float MaxPercentHealth = 100;
-
-    private void OnEnable()
+    [RequireComponent(typeof(Slider))]
+    public abstract class HealthBar : MonoBehaviour
     {
-        Health.HealthChanged += ShowNewValue;
-    }
+        private IHealth _health;
+        private protected Slider Slider;
+        protected float MaxPercentHealth = 100;
 
-    private void OnDisable()
-    {
-        Health.HealthChanged -= ShowNewValue;
-    }
+        private void Awake()
+        {
+            Slider = GetComponent<Slider>();
+        }
 
-    protected abstract void ShowNewValue(float currentHealth, float MaxHealth);
+
+        private void OnDisable()
+        {
+            _health.Changed -= ShowNewValue;
+        }
+        public virtual void Init(IHealth health)
+        {
+            _health = health;
+            _health.Changed += ShowNewValue;
+        }
+
+        protected abstract void ShowNewValue(float currentHealth, float MaxHealth);
+
+        
+    }
 }
