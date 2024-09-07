@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent (typeof(CapsuleCollider2D), typeof(CollisionDetector), typeof(Animator))]

@@ -12,8 +12,7 @@ public class DetectionZone : MonoBehaviour
         if (collision.TryGetComponent(out PlayerMoving player))
         {
             _detectedColliders.Add(player);
-        }
-        
+        } 
     }
 
     private void OnTriggerExit2D(Collider2D collision)

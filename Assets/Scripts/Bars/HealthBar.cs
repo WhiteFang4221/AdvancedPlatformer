@@ -20,14 +20,13 @@ namespace Bars
         {
             _health.Changed -= ShowNewValue;
         }
+
         public virtual void Init(IHealth health)
         {
             _health = health;
             _health.Changed += ShowNewValue;
         }
 
-        protected abstract void ShowNewValue(float currentHealth, float MaxHealth);
-
-        
+        protected abstract void ShowNewValue(float currentHealth, float MaxHealth); 
     }
 }

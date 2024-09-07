@@ -109,7 +109,6 @@ public class PlayerMoving : MonoBehaviour
             _rigidbody.velocity = new Vector2(0, _moveInput.y * CurrentSpeed);
             _animator.SetFloat(PlayerAnimationStrings.yVelocity, _rigidbody.velocity.y);
         }
-
         else if (_animator.GetBool(PlayerAnimationStrings.IsAttacking) || _animator.GetBool(PlayerAnimationStrings.IsHealing))
         {
             _rigidbody.velocity = new Vector2(Mathf.Lerp(_rigidbody.velocity.x, 0, _walkstopRate), _rigidbody.velocity.y);

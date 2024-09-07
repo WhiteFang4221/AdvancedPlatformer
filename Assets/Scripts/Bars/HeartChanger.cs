@@ -1,7 +1,7 @@
 using Bars;
 using UnityEngine;
-[RequireComponent(typeof(Animator))]
 
+[RequireComponent(typeof(Animator))]
 public static class AnimatorHeartController
 {
     public const string PlayerHealth = "PlayerHealth";
