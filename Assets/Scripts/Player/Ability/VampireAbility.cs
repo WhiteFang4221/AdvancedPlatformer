@@ -139,7 +139,7 @@ public class VampireAbility : MonoBehaviour
     {
         while (_vampirismAura.DetectedColliders.Count != 0)
         {
-            _player.Heal(healthPoints);
+            _player.TakeHeal(healthPoints);
             yield return _timeTickHealth;
         }
     }

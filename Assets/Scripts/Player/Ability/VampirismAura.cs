@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class VampirismAura : MonoBehaviour
 {
-    private static readonly List<IVampirable> vampirables = new List<IVampirable>();
-    [SerializeField] private List<IVampirable> _detectedColliders = vampirables;
+    private List<IVampirable> _detectedColliders = new List<IVampirable>();
+    private float _damage = 10f;
     
     public event Action<float> Catched;
 
-    private float _damage = 10f;
-    
     public IReadOnlyList<IVampirable> DetectedColliders => _detectedColliders;
 
     private void OnTriggerEnter2D(Collider2D collision)

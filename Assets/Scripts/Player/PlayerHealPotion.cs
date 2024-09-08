@@ -47,7 +47,7 @@ public class PlayerHealPotion : MonoBehaviour
             _animator.SetBool(PlayerAnimationStrings.IsHealing, _isHealing);
             _isCanHeal = false;
             SpendPotion();
-            _player.Heal(EffectPoints);
+            _player.TakeHeal(EffectPoints);
         }
 
         if (_isCanHeal == false)

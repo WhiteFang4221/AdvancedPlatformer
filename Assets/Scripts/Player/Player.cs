@@ -4,12 +4,13 @@ using UnityEngine;
 [RequireComponent(typeof(Animator), typeof(Rigidbody2D))]
 public class Player : MonoBehaviour, IDamageable, IPushable, IHealable, IHealthProvider
 {
-    [field: SerializeField] public Health Health { get; private set; }
-
-    public event Action Died;
 
     private Animator _animator;
     private Rigidbody2D _rigidbody;
+    
+    public event Action Died;
+
+    [field: SerializeField] public Health Health { get; private set; }
 
     private void Awake()
     {
@@ -32,7 +33,7 @@ public class Player : MonoBehaviour, IDamageable, IPushable, IHealable, IHealthP
         }
     }
 
-    public void Heal(float healPoints)
+    public void TakeHeal(float healPoints)
     {
         Health.Erase(healPoints);
     }

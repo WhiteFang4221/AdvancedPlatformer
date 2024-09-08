@@ -19,7 +19,7 @@ public class EnemyMoving : MonoBehaviour
     [SerializeField] private bool _isMoving = true;
     private bool _isFaceRight = true;
     private bool _isTrapped = false;
-    private bool _isAttacking => _animator.GetBool(EnemyAnimationStrings.IsAttacking);
+    private bool IsAttacking => _animator.GetBool(EnemyAnimationStrings.IsAttacking);
 
 
     private void Awake()
@@ -103,7 +103,7 @@ public class EnemyMoving : MonoBehaviour
 
     private void LookAtTarget(Vector2 target)
     {
-        if (!_isAttacking)
+        if (!IsAttacking)
         {
             if (transform.position.x > target.x && _isFaceRight)
             {
@@ -122,7 +122,7 @@ public class EnemyMoving : MonoBehaviour
         _isMoving = !_detectPlayer.IsHasTarget;
         _animator.SetBool(EnemyAnimationStrings.IsMoving, _isMoving);  
 
-        if (_isMoving && !_isAttacking)
+        if (_isMoving && !IsAttacking)
         {
             _rigidbody.velocity = new Vector2(_speed * transform.localScale.x, _rigidbody.velocity.y);
         }
